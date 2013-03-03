@@ -18,15 +18,13 @@
   "dependencies": {
     "javascript-brunch": ">= 1.0 < 1.4",
     "coffee-script-brunch": ">= 1.0 < 1.4",
-
     "css-brunch": ">= 1.0 < 1.4",
     "stylus-brunch": ">= 1.0 < 1.4",
-    "less-brunch":      ">= 1.0 < 1.4",
-
+    "less-brunch": ">= 1.0 < 1.4",
     "handlebars-brunch": ">= 1.0 < 1.4",
-
     "uglify-js-brunch": ">= 1.0 < 1.4",
-    "clean-css-brunch": ">= 1.0 < 1.4"
+    "clean-css-brunch": ">= 1.0 < 1.4",
+    "iced-coffee-script-brunch": "~1.5.0"
   },
   "devDependencies": {
     "chai": "1.0.4",
