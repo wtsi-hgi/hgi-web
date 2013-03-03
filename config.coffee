@@ -43,6 +43,6 @@ exports.config =
       joinTo: 'javascripts/app.js'
 
   paths:
-    ignored: /^vendor(\/|\\)styles(\/|\\)bootstrap/
+    ignored: /^vendor(\/|\\)styles(\/|\\)(bootstrap|Font-Awesome)/
 
   framework: 'chaplin'
