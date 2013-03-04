@@ -2,31 +2,10 @@
  * app/views/styles/sanger.styl
  */ 
 
-/*
- * Modified from http://charliepark.org/bootstrap_buttons with settings:
- * Puffiness: 14
- */
-button-rules-puffi-14(hue, saturation, lightness, btn-grad-top, btn-grad-bot, lightness-dark, color, text-shadow)
-  background-color: hsl(hue, saturation, lightness) !important
-  background-repeat: repeat-x
-  filter: unquote('progid:DXImageTransform.Microsoft.gradient')(startColorstr="btn-grad-top", endColorstr="btn-grad-bot")
-  background-image: -khtml-gradient(linear, left top, left bottom, from(btn-grad-top), to(btn-grad-bot))
-  background-image: -moz-linear-gradient(top, btn-grad-top, btn-grad-bot)
-  background-image: -ms-linear-gradient(top, btn-grad-top, btn-grad-bot)
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, btn-grad-top), color-stop(100%, btn-grad-bot))
-  background-image: -webkit-linear-gradient(top, btn-grad-top, btn-grad-bot)
-  background-image: -o-linear-gradient(top, btn-grad-top, btn-grad-bot)
-  background-image: linear-gradient(btn-grad-top, btn-grad-bot)
-  border-color: btn-grad-bot btn-grad-bot hsl(hue, saturation, lightness-dark)
-  color: color !important
-  text-shadow: text-shadow
-  -webkit-font-smoothing: antialiased
-  -webkit-font-smoothing: antialiased
-
-
 sanger-darkblue-hue = 208
 sanger-darkblue-saturation = 82%
 sanger-darkblue-lightness = 16%
+sanger-darkblue-rgb = #072b4a
 sanger-darkblue-lightness-dark = 9%
 sanger-darkblue-btn-grad-top = #1476cc
 sanger-darkblue-btn-grad-bot = #072b4a
@@ -36,6 +15,7 @@ sanger-darkblue-text-shadow = 0 -1px 0 rgba(0, 0, 0, 0.46)
 sanger-mediumblue-hue = 210
 sanger-mediumblue-saturation = 44%
 sanger-mediumblue-lightness = 48%
+sanger-mediumblue-rgb = #457ab0
 sanger-mediumblue-lightness-dark = 41%
 sanger-mediumblue-btn-grad-top = #739ec8
 sanger-mediumblue-btn-grad-bot = #30567c
@@ -45,18 +25,10 @@ sanger-mediumblue-text-shadow = 0 -1px 0 rgba(0, 0, 0, 0.46)
 sanger-lightblue-hue = 206
 sanger-lightblue-saturation = 14%
 sanger-lightblue-lightness = 77%
+sanger-lightblue-rgb = #bcc5cd
 sanger-lightblue-lightness-dark = 70%
 sanger-lightblue-btn-grad-top = #e4e8eb
 sanger-lightblue-btn-grad-bot = #93a2ad
 sanger-lightblue-color = #333
 sanger-lightblue-text-shadow = 0 1px 1px rgba(255, 255, 255, 0.46)
-
-.btn
-  button-rules-puffi-14(sanger-lightblue-hue, sanger-lightblue-saturation, sanger-lightblue-lightness, sanger-lightblue-btn-grad-top, sanger-lightblue-btn-grad-bot, sanger-lightblue-lightness-dark, sanger-lightblue-color, sanger-lightblue-text-shadow)
-
-.btn-primary
-  button-rules-puffi-14(sanger-darkblue-hue, sanger-darkblue-saturation, sanger-darkblue-lightness, sanger-darkblue-btn-grad-top, sanger-darkblue-btn-grad-bot, sanger-darkblue-lightness-dark, sanger-darkblue-color, sanger-darkblue-text-shadow)
-
-.btn-info
-  button-rules-puffi-14(sanger-mediumblue-hue, sanger-mediumblue-saturation, sanger-mediumblue-lightness, sanger-mediumblue-btn-grad-top, sanger-mediumblue-btn-grad-bot, sanger-mediumblue-lightness-dark, sanger-mediumblue-color, sanger-mediumblue-text-shadow)
 
