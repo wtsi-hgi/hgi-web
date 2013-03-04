@@ -3,16 +3,17 @@ mediator = require 'mediator'
 routes = require 'routes'
 SessionController = require 'controllers/session_controller'
 HeaderController = require 'controllers/header_controller'
+FooterController = require 'controllers/footer_controller'
 Layout = require 'views/layout'
 
 # The application object
-module.exports = class Application extends Chaplin.Application
+module.exports = class HGIApplication extends Chaplin.Application
   # Set your application name here so the document title is set to
   # “Controller title – Site title” (see Layout#adjustTitle)
-  title: 'Brunch example application'
+  title: 'Human Genetics Informatics'
 
   initialize: ->
-    super
+    # No need to call super as Chaplin.Application.initialize is a no-op
 
     # Initialize core components
     @initDispatcher()
@@ -51,6 +52,7 @@ module.exports = class Application extends Chaplin.Application
     # e.g. new NavigationController()
     new SessionController()
     new HeaderController()
+    new FooterController()
 
   # Create additional mediator properties
   # -------------------------------------

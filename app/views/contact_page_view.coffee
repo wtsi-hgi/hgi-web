@@ -1,10 +1,10 @@
-template = require 'views/templates/home'
+template = require 'views/templates/contact'
 PageView = require 'views/base/page_view'
 
-module.exports = class HomePageView extends PageView
+module.exports = class ContactPageView extends PageView
   template: template
-  className: 'home-page'
-  id: 'home-page'
+  className: 'contact-page'
+  id: 'contact-page'
   container: '#main-container'
   autoRender: true
 

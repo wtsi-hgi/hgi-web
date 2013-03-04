@@ -1,5 +1,5 @@
-Application = require 'application'
+HGIApplication = require 'hgi_application'
 
 $ ->
-  app = new Application()
+  app = new HGIApplication()
   app.initialize()

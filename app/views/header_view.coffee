@@ -12,4 +12,14 @@ module.exports = class HeaderView extends View
   initialize: ->
     super
     @subscribeEvent 'loginStatus', @render
-    @subscribeEvent 'startupController', @render
+    @subscribeEvent 'startupController', @startupURL
+#    @subscribeEvent '!router:changeURL', @setActiveNavigation
+
+  startupURL: (controller) ->
+    @setActiveNavigation controller.params.path
+
+  setActiveNavigation: (path) ->
+    console.log path
+    @$(".nav li > a").parent().removeClass "active"
+    @$(".nav li > a[href=\"" + path + "\"]").parent().addClass "active"
+
