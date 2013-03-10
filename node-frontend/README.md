@@ -3,7 +3,7 @@
 ## Quick Start
 
 ```sh
- cd hgi-web
+ cd hgi-web/node-frontend
  npm install
  brunch watch --server
 ```
