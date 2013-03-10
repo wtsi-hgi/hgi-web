@@ -24,7 +24,8 @@
     "handlebars-brunch": ">= 1.0 < 1.4",
     "uglify-js-brunch": ">= 1.0 < 1.4",
     "clean-css-brunch": ">= 1.0 < 1.4",
-    "iced-coffee-script-brunch": "~1.5.0"
+    "iced-coffee-script-brunch": "~1.5.0",
+    "dustjs-linkedin-brunch": "~1.5.1"
   },
   "devDependencies": {
     "chai": "1.0.4",
