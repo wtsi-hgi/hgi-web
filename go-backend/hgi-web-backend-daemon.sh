@@ -1,8 +1,8 @@
 #!/bin/bash
 
-HGI_WEB_BACKEND_RELDIR=$(dirname $0)
-HGI_WEB_BACKEND=$(cd $HGI_WEB_BACKEND_RELDIR && pwd)
-export GOPATH="$HGI_WEB_BACKEND/go"
+#HGI_WEB_BACKEND_RELDIR=$(dirname $0)
+#HGI_WEB_BACKEND=$(cd $HGI_WEB_BACKEND_RELDIR && pwd)
+#export GOPATH="$HGI_WEB_BACKEND/go"
 
 echo "Getting go package sources"
 go get github.com/wtsi-hgi/hgi-web/go-backend/hgibackend || exit

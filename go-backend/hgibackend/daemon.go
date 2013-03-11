@@ -1,23 +1,50 @@
 package main
 
 import (
-	"github.com/emicklei/go-restful"
+	"flag"
 	"log"
+	goproperties "github.com/dmotylev/goproperties"
+	restful "github.com/emicklei/go-restful"
+	"labix.org/v2/mgo"
+	"github.com/wtsi-hgi/hgi-web/go-backend/dao"
+	"github.com/wtsi-hgi/hgi-web/go-backend/application"
+	"github.com/wtsi-hgi/hgi-web/go-backend/webservice"
 	"net/http"
-	"github.com/wtsi-hgi/hgi-web/go-backend/project"
 )
 
+var configFile string
+
+func init() {
+	flag.StringVar(&configFile, "config_file", "hgibackend.conf", "Configuration file")
+}
+
 func main() {
-	restful.Add(project.NewService())
+	log.Print("[hgibackend] starting...")
+	
+	flag.Parse()
 
-	config := restful.SwaggerConfig{
-		WebServicesUrl: "http://localhost:8080",
-		ApiPath: "/apidocs.json",
-		SwaggerPath: "/apidocs/",
-		SwaggerFilePath: "/Users/jr17/swagger-ui-1.1.7",
+	config, _ := goproperties.Load(configFile)
+
+	mangoses, _ := mgo.Dial(config["mongo.connection"])
+	defer mangoses.Close()
+
+	projDao := dao.ProjectDao{mangoses.DB(config["mongo.database"]).C("projects")}
+	
+	application.SharedLogic = application.Logic{projDao}
+	
+	restful.Add(webservice.Project())
+	
+	baseUrl := "http://" + config["http.server.host"] + ":" + config["http.server.port"]
+	
+	swaggerConf := restful.SwaggerConfig{
+		WebServicesUrl:  baseUrl,
+		ApiPath:         config["swagger.api"],
+		SwaggerPath:     config["swagger.path"],
+		SwaggerFilePath: config["swagger.home"],
 	}
-	restful.InstallSwaggerService(config)
+	restful.InstallSwaggerService(swaggerConf)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Printf("[hgibackend] about to start serving at %v\n", baseUrl)
+	log.Fatal(http.ListenAndServe(":" + config["http.server.port"], nil))
 }
 
