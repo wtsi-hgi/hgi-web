@@ -1,12 +1,14 @@
 #!/bin/bash
 
-HGI_WEB_BACKEND=$(dirname $0)
-GOPATH=${HGI_WEB_BACKEND}/go
+HGI_WEB_BACKEND_RELDIR=$(dirname $0)
+HGI_WEB_BACKEND=$(cd $HGI_WEB_BACKEND_RELDIR && pwd)
+export GOPATH="$HGI_WEB_BACKEND/go"
 
-go get github.com/emicklei/go-restful
-go get labix.org/v2/mgo
+echo "Getting go package sources"
+go get github.com/wtsi-hgi/hgi-web/go-backend/hgibackend || exit
 
-go install github.com/wtsi-hgi/hgi-web/go-backend/hgibackend
+echo "Installing go packages"
+go install github.com/wtsi-hgi/hgi-web/go-backend/hgibackend || exit
 
-#(cd ${HGI_WEB_BACKEND} && go install -gcflags "-N -l" hgi-web-backend/hgibackend/daemon.go && ./bin/hgibackend $@)
-
+echo "Running hgibackend"
+$GOPATH/bin/hgibackend $@
