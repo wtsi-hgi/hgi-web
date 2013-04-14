@@ -8,7 +8,6 @@ import (
 //	"log"
 )
 
-
 func Project() *restful.WebService {
 	ws := new(restful.WebService)
 	
@@ -44,12 +43,18 @@ func Project() *restful.WebService {
 }
 
 
+func addCommonHeaders(response *restful.Response) {
+	response.AddHeader("Access-Control-Allow-Origin", "*")
+	response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+}
+
 func listProjects(request *restful.Request, response *restful.Response) {
 	projects, err := application.SharedLogic.AllProjects()
 	if err != nil {
 		response.WriteError(http.StatusInternalServerError, err)
 		return
 	}
+	addCommonHeaders(response)
 	response.WriteEntity(projects)
 }
 
@@ -68,6 +73,7 @@ func createProject(request *restful.Request, response *restful.Response) {
 		response.WriteError(http.StatusInternalServerError, err)
 	}
 
+	addCommonHeaders(response)
 	response.WriteEntity(dbid)
 }
 
@@ -83,14 +89,18 @@ func getProject(request *restful.Request, response *restful.Response) {
 		return
 	}
 	
+	addCommonHeaders(response)
 	response.WriteEntity(project)
 }
 
 func putProject(request *restful.Request, response *restful.Response) {
 
+	addCommonHeaders(response)
+
 }
 
 func deleteProject(request *restful.Request, response *restful.Response) {
 
+	addCommonHeaders(response)
 }
 
