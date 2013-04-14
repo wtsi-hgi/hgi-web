@@ -49,6 +49,9 @@ module.exports = class HGIApplication extends Chaplin.Application
     # Freeze the application instance to prevent further changes
     Object.freeze? this
 
+    # Connect to window for debugging
+    window.Application = this
+
   # Override standard layout initializer
   # ------------------------------------
   initLayout: ->

@@ -13,18 +13,13 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with hgi-web.  If not, see <http://www.gnu.org/licenses/>.
 
-Controller = require 'controllers/base/controller'
 mediator = require 'mediator'
+Model = require 'models/base/model'
+Project = require 'models/project'
+ProjectsCollection = require 'models/projects_collection'
 
-HomePage = require 'models/home_page'
-HomePageView = require 'views/home_page_view'
-
-module.exports = class HomeController extends Controller
-  historyURL: 'home'
-
-  index: ->
-    mediator.publish '!router:changeURL', 'home'
-
-  home: ->
-    @model = new HomePage()
-    @view = new HomePageView({@model})
+module.exports = class ProjectsPage extends Model
+  defaults:
+    title: 'Projects',
+    text: 'Projects page text goes here.'
+  

@@ -46,3 +46,4 @@ exports.config =
     ignored: /^vendor(\/|\\)styles(\/|\\)(bootstrap|Font-Awesome)/
 
   framework: 'chaplin'
+

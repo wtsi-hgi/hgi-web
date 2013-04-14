@@ -14,17 +14,19 @@
 #    along with hgi-web.  If not, see <http://www.gnu.org/licenses/>.
 
 Controller = require 'controllers/base/controller'
-mediator = require 'mediator'
+ProjectsPage = require 'models/projects_page'
+ProjectsPageView = require 'views/projects_page_view'
+ProjectsCollection = require 'models/projects_collection'
+ProjectsCollectionView = require 'views/projects_collection_view'
 
-HomePage = require 'models/home_page'
-HomePageView = require 'views/home_page_view'
+module.exports = class ProjectsController extends Controller
+  historyURL: 'projects'
 
-module.exports = class HomeController extends Controller
-  historyURL: 'home'
+  projects: ->
+    @collection = new ProjectsCollection()
 
-  index: ->
-    mediator.publish '!router:changeURL', 'home'
+    @model = new ProjectsPage()
+    @view = new ProjectsPageView({@model, @collection})
 
-  home: ->
-    @model = new HomePage()
-    @view = new HomePageView({@model})
+    @collection.fetch() if @collection.isEmpty()
+
