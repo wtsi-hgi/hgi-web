@@ -16,6 +16,7 @@
 Collection = require 'models/base/collection'
 Project = require 'models/project'
 Chaplin = require 'chaplin'
+Settings = require 'settings'
 
 module.exports = class ProjectsCollection extends Collection
 
@@ -40,7 +41,9 @@ module.exports = class ProjectsCollection extends Collection
     super @options
 
   url: ->
-    'http://localhost:4444/projects'
+    console.log 'ProjectsCollection setting URL'
+    console.log Settings.projectRestUrl
+    Settings.projectRestUrl
 
   parse: (response) ->
     response.Project
