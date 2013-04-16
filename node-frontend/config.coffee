@@ -42,7 +42,7 @@ exports.config =
       defaultExtension: 'hbs'
       joinTo: 'javascripts/app.js'
 
-  paths:
+  conventions:
     ignored: /^vendor(\/|\\)styles(\/|\\)(bootstrap|Font-Awesome)/
 
   framework: 'chaplin'
