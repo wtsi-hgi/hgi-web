@@ -5,8 +5,8 @@ HGI-web is a web frontend/backend for management of HGI systems, built using
 brunch, node.js, chaplin.js, Go, and others.
 
 
-Install (Ubuntu Linux example)
-------------------------------
+Install (Linux example using Ubuntu 12.04 LTS)
+----------------------------------------------
 
 ```bash
 # Install prerequisites (node ~ 0.8.23, npm ~ 1.2.18, brunch)
