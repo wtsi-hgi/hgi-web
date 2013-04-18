@@ -5,6 +5,6 @@
 ```sh
  cd hgi-web/node-frontend
  npm install
- brunch watch --server
+ brunch watch --server --port 9000
 ```
 
