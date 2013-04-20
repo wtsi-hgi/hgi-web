@@ -20,12 +20,13 @@ SessionController = require 'controllers/session_controller'
 HeaderController = require 'controllers/header_controller'
 FooterController = require 'controllers/footer_controller'
 Layout = require 'views/layout'
+Settings = require 'settings'
 
 # The application object
 module.exports = class HGIApplication extends Chaplin.Application
   # Set your application name here so the document title is set to
   # “Controller title – Site title” (see Layout#adjustTitle)
-  title: 'Human Genetics Informatics'
+  title: Settings.title
 
   initialize: ->
     # No need to call super as Chaplin.Application.initialize is a no-op
@@ -39,7 +40,7 @@ module.exports = class HGIApplication extends Chaplin.Application
     @initControllers()
 
     # Register all routes and start routing
-    @initRouter routes
+    @initRouter routes, root: Settings.baseUrl
     # You might pass Router/History options as the second parameter.
     # Chaplin enables pushState per default and Backbone uses / as
     # the root per default. You might change that in the options
