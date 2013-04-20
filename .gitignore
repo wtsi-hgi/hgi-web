@@ -28,3 +28,6 @@ public/
 
 # Brunch folder for temporary files.
 tmp/
+
+# Files that need to be configured by installer
+node-frontend/app/settings.coffee
