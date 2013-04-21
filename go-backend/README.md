@@ -11,6 +11,11 @@ go get labix.org/v2/mgo
 # Clone source
 cd ~
 git clone https://github.com/wtsi-hgi/hgi-web.git
+
+# Configure
+cd ~/hgi-web/go-backend
+cp hgibackend.conf.tmpl hgibackend.conf
+# now edit hgibackend.conf to configure
 ```
 
 Running
