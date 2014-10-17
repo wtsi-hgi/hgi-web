@@ -15,7 +15,9 @@ RUN npm install -g brunch
 
 # Bundle and install frontend
 COPY node-frontend /frontend
+COPY start-frontend.sh /
 RUN cp /frontend/app/settings.coffee.tmpl /frontend/app/settings.coffee
 RUN cd /frontend; npm install
 
 EXPOSE 8080
+CMD ["./start-frontend.sh"]
