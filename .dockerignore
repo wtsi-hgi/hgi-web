@@ -1,0 +1,5 @@
+.git
+.gitignore
+
+# We don't ignore node-frontend/node_modules because they've been
+# superceded and the new versions no longer work :P
