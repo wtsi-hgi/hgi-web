@@ -16,8 +16,9 @@ From the project root:
 
 ```sh
 docker build -t frontend .
-./start-container.sh
+./boot.sh
 ```
 
-This will start the container on the Docker host forwarded to port 80.
-If needed, set an alternative port as the command line option.
+This will start the frontend behind a reverse proxy in the container,
+through port 80. (Use the command line argument to set an alternative
+port, if necessary.)

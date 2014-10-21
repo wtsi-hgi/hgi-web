@@ -6,9 +6,8 @@ RUN     apt-get update
 
 # Install and set up Apache as a reverse proxy
 RUN     apt-get -y install apache2 libapache2-mod-proxy-html
-COPY    apache2.conf /etc/apache2/app.conf
-RUN     cat /etc/apache2/app.conf >> /etc/apache2/apache2.conf
-RUN     service apache2 start
+RUN     rm /etc/apache2/sites-enabled/000-default
+COPY    apache2.conf /etc/apache2/sites-enabled/app.conf
 
 # Install Node.js, npm and brunch
 RUN     apt-get -y install python-software-properties python g++ make
@@ -20,9 +19,8 @@ RUN     npm install -g brunch
 
 # Bundle and install frontend
 COPY    node-frontend /frontend
-COPY    start-frontend.sh /
 RUN     cp /frontend/app/settings.coffee.tmpl /frontend/app/settings.coffee
 RUN     cd /frontend; npm install
 
 EXPOSE  80
-CMD     ["./start-frontend.sh"]
+CMD     /bin/bash -c "service apache2 start; cd /frontend && brunch watch --server --port 9000"
