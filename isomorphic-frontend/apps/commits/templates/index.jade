@@ -1,0 +1,16 @@
+include ../../../components/search/mixin
+
+doctype html
+html
+  head
+    img#commits-img( src='images/hgi.svg' )
+    title HGI GitHub Repos
+    link( type='text/css', rel='stylesheet', href=('/assets/commits' + sd.CSS_EXT) )
+  body
+    h1 See commits for HGI repos using the GitHub API!
+    mixin search('Try "serapis" for starters, and hit then enter.')
+    ul#commits-list
+      include list
+    #scripts
+      != sharify.script()
+      script( src='/assets/commits' + sd.JS_EXT )
