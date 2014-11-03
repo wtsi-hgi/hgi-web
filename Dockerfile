@@ -18,7 +18,7 @@ RUN     apt-get -y install npm=1.3.0-1chl1~precise1
 RUN     npm install -g brunch
 
 # Bundle and install frontend
-COPY    node-frontend /frontend
+COPY    old-frontend /frontend
 RUN     cp /frontend/app/settings.coffee.tmpl /frontend/app/settings.coffee
 RUN     cd /frontend; npm install
 

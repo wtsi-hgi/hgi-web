@@ -30,4 +30,4 @@ public/
 tmp/
 
 # Files that need to be configured by installer
-node-frontend/app/settings.coffee
+old-frontend/app/settings.coffee
