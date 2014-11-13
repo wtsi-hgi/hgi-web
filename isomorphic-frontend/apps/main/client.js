@@ -2,7 +2,8 @@ var Backbone = require('backbone'),
     $        = require('jquery'),
     sd       = require('sharify').data;
 
-Backbone.$ = $;
+// Let's get the jQuery dependencies sorted
+Backbone.$ = jQuery = $;
 
 // Content templates
 // Call with arguments for templating locals
@@ -46,6 +47,7 @@ module.exports.ClientRouter = ClientRouter = Backbone.Router.extend({
 
 // Client
 module.exports.init = function() {
+
   var navLinks = {
     home:    $('li.nav-link[data-id="home"]'),
     about:   $('li.nav-link[data-id="about"]'),
@@ -54,7 +56,7 @@ module.exports.init = function() {
 
   var ui = new UIView({
     el:    $('#content'),
-    model: new Backbone.Model({active: $('ul.navbar-nav > li.active')})
+    model: new Backbone.Model({active: $('li.nav-link.active')})
   });
 
   var router = new ClientRouter;

@@ -1,3 +1,3 @@
 # Human Genetics Informatics Project Interface
 
-Now with Isomorphic JavaScript!
+Now with Isomorphic JavaScript goodness!

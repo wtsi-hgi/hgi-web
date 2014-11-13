@@ -46,7 +46,7 @@ module.exports = function(app) {
   // Test only
   if('test' == sd.NODE_ENV) {
     // Mount fake API server
-    app.use('/__api', require('../test/helpers/integration.js').api);
+    // app.use('/__api', require('../test/helpers/integration.js').api);
   }
 
   // Mount apps
