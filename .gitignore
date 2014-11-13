@@ -23,11 +23,6 @@ Thumbs.db
 # NPM packages folder.
 node_modules/
 
-# public folder
-public/
-
-# Brunch folder for temporary files.
-tmp/
-
 # Files that need to be configured by installer
 old-frontend/app/settings.coffee
+old-frontend/public

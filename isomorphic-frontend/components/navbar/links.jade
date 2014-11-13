@@ -5,10 +5,13 @@
 //- meaningful RESTful interaction.
 
 - var links = [];
-- links.push({name: 'Home',    href: '#',      });
-- links.push({name: 'About',   href: '#about', });
-- links.push({name: 'Contact', href: '#contact'});
+- links.push({name: 'Home',    id: 'home',    href: ''       });
+- links.push({name: 'About',   id: 'about',   href: 'about'  });
+- links.push({name: 'Contact', id: 'contact', href: 'contact'});
 
 each link in links
-  li(class = link.name == active ? 'active' : undefined)
+  li(
+    class   = ['nav-link', link.name == active ? 'active' : undefined],
+    data-id = link.id
+  )
     a(href = link.href)= link.name

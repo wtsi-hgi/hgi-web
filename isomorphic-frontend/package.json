@@ -1,6 +1,6 @@
 {
-  "author": "Christopher Harrison"
-  "name": "hgi-web Isomorphic Frontend",
+  "author": "Christopher Harrison",
+  "name": "hgi-web-isomorphic-frontend",
   "version": "0.0.1",
   "license": "AGPLv3",
   "private": true,
@@ -16,18 +16,19 @@
     "node-env-file": "*"
   },
   "devDependencies": {
-    "jquery": "*",
-    "browserify": "*",
-    "stylus": "*",
-    "jadeify": "*",
-    "browserify-dev-middleware": "*",
-    "should": "*",
-    "mocha": "*",
-    "sinon": "*",
     "benv": "*",
-    "zombie": "*",
+    "bootstrap": "^3.3.0",
+    "browserify": "*",
+    "browserify-dev-middleware": "*",
     "html5": "*",
+    "jadeify": "*",
+    "jquery": "*",
+    "mocha": "*",
+    "should": "*",
+    "sinon": "*",
     "sqwish": "*",
-    "uglify-js": "*"
+    "stylus": "*",
+    "uglify-js": "*",
+    "zombie": "*"
   }
 }
