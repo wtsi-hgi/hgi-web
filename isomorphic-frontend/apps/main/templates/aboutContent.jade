@@ -1,1 +1,36 @@
-p About!
+.page-header
+  h1 Isomorphic JavaScript Frontend
+
+p I have two problems with the term #[i isomorphic JavaScript]:
+
+ol
+  li
+    p.
+      Objects are said to be isomorphic when there is an invertable,
+      structure-preserving map between them. The word has Greek roots,
+      meaning "same shape"; indeed, if two objects are isomorphic, then
+      they are, in a mathematical sense, indistinguishable. For example,
+      a square and a rectangle are isomorphic under scaling.
+
+    p.
+      I can see where whoever coined the term was going with the idea,
+      but it's a false analogy. The "map" from server to client is 
+      basically #[a(href="http://browserify.org") Browserify] and the
+      rest of the #[a(href="http://ezeljs.com") Ezel.js] stack, which is
+      only one-way as it excludes server-specific code paths.
+
+  li
+    p The other problem is best illustrated:
+    p: img.img-responsive(
+         src = 'http://www.quickmeme.com/img/8d/8d30a19413145512ad5a05c46ec0da545df5ed79e113fcf076dc03c7514eb631.jpg',
+         alt = 'JavaScript ALL THE THINGS!'
+       )
+    p.
+      We don't use JavaScript because we want to. Rather, because we
+      have to!
+
+hr
+
+p.
+  I therefore propose the alternative term,
+  #[i.text-info homogeneous stack].
