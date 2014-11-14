@@ -1,9 +1,10 @@
-var Backbone = require('backbone'),
-    $        = require('jquery'),
-    sd       = require('sharify').data;
+var Backbone   = require('backbone'),
+    $ = jQuery = require('jquery'),
+    bootstrap  = require('bootstrap'),
+    sd         = require('sharify').data;
 
 // Let's get the jQuery dependencies sorted
-Backbone.$ = jQuery = $;
+Backbone.$ = $;
 
 // Content templates
 // Call with arguments for templating locals

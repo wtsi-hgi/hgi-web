@@ -5,7 +5,7 @@
   "license": "AGPLv3",
   "private": true,
   "scripts": {
-    "start": "make s"
+    "start": "make up"
   },
   "dependencies": {
     "express": "*",
@@ -13,16 +13,16 @@
     "sharify": "*",
     "backbone": "*",
     "backbone-super-sync": "*",
-    "node-env-file": "*"
+    "node-env-file": "*",
+    "jquery": "*",
+    "bootstrap": "*"
   },
   "devDependencies": {
     "benv": "*",
-    "bootstrap": "^3.3.0",
     "browserify": "*",
     "browserify-dev-middleware": "*",
     "html5": "*",
     "jadeify": "*",
-    "jquery": "*",
     "mocha": "*",
     "should": "*",
     "sinon": "*",

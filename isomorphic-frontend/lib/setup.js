@@ -61,7 +61,5 @@ module.exports = function(app) {
     app.use(express.static(path.resolve(__dirname, '../components/' + fld + '/public')));
   });
   
-  app.use(express.static(path.resolve(__dirname, '../vendor')));
-
   app.use(express.static(path.resolve(__dirname, '../public')));
 }
