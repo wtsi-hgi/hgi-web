@@ -11,7 +11,7 @@ make up
 ```
 
 This starts the application on `localhost:9000` in development mode. For
-production, the [.env](environment variables) file needs to be updated
+production, the [environment variables](.env) file needs to be updated
 appropriately and minified assets built (`make assets`).
 
 ### Containerisation with Docker
