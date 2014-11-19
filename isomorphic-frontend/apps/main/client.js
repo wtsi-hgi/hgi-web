@@ -11,9 +11,10 @@ Backbone.$ = $;
 // NOTE These have to be hardcoded for Jade to process them at build
 // time. We can't create them dynamically at runtime, unfortunately :P
 var getContent = {
-  home:    require('./templates/homeContent.jade'),
-  about:   require('./templates/aboutContent.jade'),
-  contact: require('./templates/contactContent.jade')
+  home:     require('./templates/homeContent.jade'),
+  projects: require('./templates/projectsContent.jade'),
+  about:    require('./templates/aboutContent.jade'),
+  contact:  require('./templates/contactContent.jade')
 };
 
 module.exports.UIView = UIView = Backbone.View.extend({
@@ -50,9 +51,10 @@ module.exports.ClientRouter = ClientRouter = Backbone.Router.extend({
 module.exports.init = function() {
 
   var navLinks = {
-    home:    $('li.nav-link[data-id="home"]'),
-    about:   $('li.nav-link[data-id="about"]'),
-    contact: $('li.nav-link[data-id="contact"]')
+    home:     $('li.nav-link[data-id="home"]'),
+    projects: $('li.nav-link[data-id="projects"]'),
+    about:    $('li.nav-link[data-id="about"]'),
+    contact:  $('li.nav-link[data-id="contact"]')
   };
 
   var ui = new UIView({
