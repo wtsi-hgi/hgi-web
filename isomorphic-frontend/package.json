@@ -18,17 +18,10 @@
     "bootstrap": "*"
   },
   "devDependencies": {
-    "benv": "*",
     "browserify": "*",
     "browserify-dev-middleware": "*",
-    "html5": "*",
     "jadeify": "*",
-    "mocha": "*",
-    "should": "*",
-    "sinon": "*",
-    "sqwish": "*",
     "stylus": "*",
-    "uglify-js": "*",
-    "zombie": "*"
+    "uglify-js": "*"
   }
 }
