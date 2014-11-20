@@ -3,6 +3,7 @@
 // populating sharify data
 
 var express  = require('express'),
+    gzip     = require('compression'),
     Backbone = require('backbone'),
     sharify  = require('sharify'),
     path     = require('path'),
@@ -25,6 +26,9 @@ module.exports = function(app) {
   Backbone.sync.editRequest = function(req, method, model, options) {
     req.set({'User-Agent': 'wtsi-hgi'});
   };
+
+  // Mount gzip compression
+  app.use(gzip());
 
   // Mount sharify
   app.use(sharify);

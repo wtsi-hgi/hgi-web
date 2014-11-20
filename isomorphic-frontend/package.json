@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "express": "*",
+    "compression": "*",
     "jade": "*",
     "sharify": "*",
     "backbone": "*",
