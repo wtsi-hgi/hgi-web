@@ -44,12 +44,11 @@ module.exports.UIView = UIView = Backbone.View.extend({
 
 // Client-side routes
 module.exports.ClientRouter = ClientRouter = Backbone.Router.extend({
-  routes: {'*id': 'mainPage' }
+  routes: {'*id(/)': 'mainPage' }
 });
 
 // Client
 module.exports.init = function() {
-
   var navLinks = {
     home:     $('li.nav-link[data-id="home"]'),
     projects: $('li.nav-link[data-id="projects"]'),
@@ -65,8 +64,17 @@ module.exports.init = function() {
   var router = new ClientRouter;
 
   router.on('route:mainPage', function(id) {
-    id = id || 'home';
-    ui.model.set('active', navLinks[id]);
+    // Extracting the actual route from the base path, which we do not
+    // know, is pretty ugly. We get the last path section and compare it
+    // against what we're expecting (i.e., hardcoded :P). Of course,
+    // this won't work if the last section of the base path is also what
+    // we're expecting. For example, if the base path happens to be
+    // `app/contact` then the home route will be erroneously matched to
+    // the contact route... FIXME
+    var route      = (id || '').split('/').pop(),
+        activeLink = navLinks[route] || navLinks.home;
+
+    ui.model.set('active', activeLink);
   });
 
   Backbone.history.start({pushState: true});

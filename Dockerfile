@@ -6,14 +6,6 @@ RUN     apt-get update
 
 # Install and set up Apache as a reverse proxy
 RUN     apt-get -y install apache2 libapache2-mod-proxy-html
-# RUN     apt-get -y install wget libxml2-dev apache2-prefork-dev
-# RUN     mkdir ~/modbuild; \
-#         cd ~/modbuild; \
-#         wget http://apache.webthing.com/svn/apache/filters/mod_xml2enc.c; \
-#         wget http://apache.webthing.com/svn/apache/filters/mod_xml2enc.h; \
-#         apxs2 -aic -I/usr/include/libxml2 ./mod_xml2enc.c; \
-#         cd ~ \
-#         rm -rfd ~/modbuild
 RUN     rm /etc/apache2/sites-enabled/000-default
 COPY    apache2.conf /etc/apache2/sites-enabled/app.conf
 

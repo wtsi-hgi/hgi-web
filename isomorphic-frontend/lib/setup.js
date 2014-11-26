@@ -28,8 +28,6 @@ module.exports = function(app) {
   };
 
   // Mount gzip compression
-  // n.b., This needs to be commented out if running behind a reverse
-  // proxy that is not at the domain root
   app.use(gzip());
 
   // Mount sharify

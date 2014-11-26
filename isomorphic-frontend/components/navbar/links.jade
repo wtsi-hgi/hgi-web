@@ -6,13 +6,13 @@
 
 - var links = [];
 - links.push({name: 'Home',     id: 'home',     href: '/'      });
-- links.push({name: 'Projects', id: 'projects', href: 'projects'  });
-- links.push({name: 'About',    id: 'about',    href: 'about'  });
-- links.push({name: 'Contact',  id: 'contact',  href: 'contact'});
+- links.push({name: 'Projects', id: 'projects', href: '/projects'  });
+- links.push({name: 'About',    id: 'about',    href: '/about'  });
+- links.push({name: 'Contact',  id: 'contact',  href: '/contact'});
 
 each link in links
   li(
     class   = ['nav-link', link.name == active ? 'active' : undefined],
     data-id = link.id
   )
-    a(href = link.href)= link.name
+    a(href = baseURL + link.href)= link.name

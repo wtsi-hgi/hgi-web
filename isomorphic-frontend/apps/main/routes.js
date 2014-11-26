@@ -1,5 +1,7 @@
 // Server-side routes for main pages
-exports.home     = function(req, res, next) { res.render('home'); };
-exports.projects = function(req, res, next) { res.render('projects'); };
-exports.about    = function(req, res, next) { res.render('about'); };
-exports.contact  = function(req, res, next) { res.render('contact'); };
+['home', 'projects', 'about', 'contact'].forEach(function(page) {
+  exports[page] = function(req, res, next) {
+    var locals = {baseURL: req.headers['x-script-name'] || ''};
+    res.render(page, locals);
+  }
+});

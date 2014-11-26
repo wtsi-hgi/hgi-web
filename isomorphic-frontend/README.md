@@ -23,5 +23,5 @@ docker build -t frontend .
 ./boot.sh
 ```
 
-This will start the frontend behind a reverse proxy in the container,
-through port 80 by default.
+This will start the frontend behind a reverse proxy at `app/test` in the
+container, through port 80 by default.
