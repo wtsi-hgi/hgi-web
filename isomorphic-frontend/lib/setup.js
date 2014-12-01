@@ -12,10 +12,11 @@ var express  = require('express'),
 module.exports = function(app) {
   // Inject some configuration & constant data into sharify
   var sd = sharify.data = {
-    API_URL:  process.env.API_URL,
-    NODE_ENV: process.env.NODE_ENV,
-    JS_EXT:   'production' == process.env.NODE_ENV ? '.min.js'  : '.js',
-    CSS_EXT:  'production' == process.env.NODE_ENV ? '.min.css' : '.css'
+    API_URL:   process.env.API_URL,
+    NODE_ENV:  process.env.NODE_ENV,
+    JS_EXT:    'production' == process.env.NODE_ENV ? '.min.js'  : '.js',
+    CSS_EXT:   'production' == process.env.NODE_ENV ? '.min.css' : '.css',
+    BASE_PATH: process.env.BASE_PATH || ''
   };
 
   // Override Backbone to use server-side sync
