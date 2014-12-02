@@ -16,7 +16,8 @@ module.exports = function(app) {
     NODE_ENV:  process.env.NODE_ENV,
     JS_EXT:    'production' == process.env.NODE_ENV ? '.min.js'  : '.js',
     CSS_EXT:   'production' == process.env.NODE_ENV ? '.min.css' : '.css',
-    BASE_PATH: process.env.BASE_PATH || ''
+    // Normalise base path so it ends with exactly one '/'
+    BASE_PATH: (process.env.BASE_PATH || '/').replace(/\/*$/, '/')
   };
 
   // Override Backbone to use server-side sync

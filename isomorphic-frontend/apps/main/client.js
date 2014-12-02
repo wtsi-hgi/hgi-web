@@ -44,14 +44,19 @@ module.exports.UIView = UIView = Backbone.View.extend({
 
 // Client-side routes
 module.exports.ClientRouter = ClientRouter = Backbone.Router.extend({
-  routes: { '*id(/)': 'mainPage' }
+  routes: {'*id(/)': 'mainPage'}
 });
 
 // Client
 module.exports.init = function() {
   // We use this to strip the base path prefix from routes
-  var prefixStrip = new RegExp('^' + sd.BASE_PATH.replace(/\//g, '\\/') + '\/?');
+  var prefixStrip = (function() {
+    var base  = sd.BASE_PATH.slice(1), // We don't want the initial '/'
+        strip = new RegExp('^' + base + '/?');
 
+    return function(s) { return (s || '').replace(strip, ''); };
+  })();
+  
   var navLinks = {
     home:     $('li.nav-link[data-id="home"]'),
     projects: $('li.nav-link[data-id="projects"]'),
@@ -67,7 +72,7 @@ module.exports.init = function() {
   var router = new ClientRouter;
 
   router.on('route:mainPage', function(id) {
-    var route = (id || '').replace(prefixStrip, ''),
+    var route = prefixStrip(id),
         activeLink = navLinks[route] || navLinks.home;
 
     ui.model.set('active', activeLink);
