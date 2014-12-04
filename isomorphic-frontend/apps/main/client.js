@@ -57,12 +57,10 @@ module.exports.init = function() {
     return function(s) { return (s || '').replace(strip, ''); };
   })();
   
-  var navLinks = {
-    home:     $('li.nav-link[data-id="home"]'),
-    projects: $('li.nav-link[data-id="projects"]'),
-    about:    $('li.nav-link[data-id="about"]'),
-    contact:  $('li.nav-link[data-id="contact"]')
-  };
+  var navLinks = {};
+  $.each(['home', 'projects', 'about', 'contact'], function(i, k) {
+    navLinks[k] = $('li.nav-link[data-id="' + k +'"]');
+  });
 
   var ui = new UIView({
     el:    $('#content'),
