@@ -2,6 +2,9 @@
 // global configuration such as overriding Backbone.sync and
 // populating sharify data
 
+// AGPLv3 or later
+// Copyright (c) 2014 Genome Research Limited
+
 var express  = require('express'),
     gzip     = require('compression'),
     Backbone = require('backbone'),

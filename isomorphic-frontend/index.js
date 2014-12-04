@@ -1,5 +1,8 @@
 // Main app file. Loads the .env file, runs setup code, and starts the server.
 
+// AGPLv3 or later
+// Copyright (c) 2014 Genome Research Limited
+
 var express = require('express'),
     setup   = require('./lib/setup'),
     env     = require('node-env-file');

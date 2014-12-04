@@ -1,3 +1,6 @@
+// AGPLv3 or later
+// Copyright (c) 2014 Genome Research Limited
+
 var Backbone   = require('backbone'),
     $ = jQuery = require('jquery'),
     bootstrap  = require('bootstrap'),
