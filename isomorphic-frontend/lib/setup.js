@@ -2,6 +2,9 @@
 // global configuration such as overriding Backbone.sync and
 // populating sharify data
 
+// AGPLv3 or later
+// Copyright (c) 2014 Genome Research Limited
+
 var express  = require('express'),
     gzip     = require('compression'),
     Backbone = require('backbone'),
@@ -12,19 +15,28 @@ var express  = require('express'),
 module.exports = function(app) {
   // Inject some configuration & constant data into sharify
   var sd = sharify.data = {
-    API_URL:   process.env.API_URL,
+    // Environment (production|development|test)
     NODE_ENV:  process.env.NODE_ENV,
+
+    // File extensions for static assets
     JS_EXT:    'production' == process.env.NODE_ENV ? '.min.js'  : '.js',
     CSS_EXT:   'production' == process.env.NODE_ENV ? '.min.css' : '.css',
-    // Normalise base path so it ends with exactly one '/'
-    BASE_PATH: (process.env.BASE_PATH || '/').replace(/\/*$/, '/')
+
+    // Normalise base path (for reverse proxy) so it ends with exactly one '/'
+    BASE_PATH: (process.env.BASE_PATH || '/').replace(/\/*$/, '/'),
+
+    // URL for bearer token provider
+    TOKEN_URL: process.env.TOKEN_URL,
+
+    // URL for RESTful API
+    API_URL:   process.env.API_URL
   };
 
   // Override Backbone to use server-side sync
   Backbone.sync = require('backbone-super-sync');
 
   // TODO ch12 20141103 Use this function to inject specific HTTP
-  // headers into *every* request. This may be useful for, e.g., OAUTH
+  // headers into *every* request. This may be useful for, e.g., OAuth
   Backbone.sync.editRequest = function(req, method, model, options) {
     req.set({'User-Agent': 'wtsi-hgi'});
   };
@@ -51,8 +63,8 @@ module.exports = function(app) {
 
   // Test only
   if('test' == sd.NODE_ENV) {
-    // Mount fake API server
-    // app.use('/__api', require('../test/helpers/integration.js').api);
+    // TODO ch12 20141203 All testing code was removed some time ago. It
+    // would probably be a good idea to create some new tests... 
   }
 
   // Mount apps

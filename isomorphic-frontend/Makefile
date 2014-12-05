@@ -1,3 +1,6 @@
+# AGPLv3 or later
+# Copyright (c) 2014 Genome Research Limited
+
 BIN = node_modules/.bin
 
 # Start the server
