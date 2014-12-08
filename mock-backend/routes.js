@@ -4,6 +4,8 @@
 // HTTP methods must be in lowercase and be any of those supported by
 // Express, with the exception of 'options'
 
+var client = require('./routes/client');
+
 module.exports = {
   '/': {
     get: function(req, res) {
@@ -12,9 +14,13 @@ module.exports = {
     }
   },
 
-  '/foo': {
-    post: function(req, res) {
-      res.send();
+  '/_xyzzy': {
+    get: function(req, res) {
+      res.status(418).send('I\'m a teapot');
     }
-  }
+  },
+
+  '/_client':         client.root,
+  '/_client/:id':     client.id,
+  '/_client/:id/:fn': client.fn
 };
