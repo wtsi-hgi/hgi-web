@@ -35,9 +35,7 @@ Object.keys(routes).forEach(function(route) {
 
   // Set up OPTIONS handler
   app.options(route, function(req, res) {
-    var allow = routeVerbs.map(function(x) { return x.toUpperCase(); })
-                          .concat('OPTIONS')
-                          .join(',');
+    var allow = routeVerbs.join(',').toUpperCase() + ',OPTIONS';
 
     res.set('Allow', allow);
     res.send();
