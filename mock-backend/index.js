@@ -14,7 +14,10 @@ var routes  = require('./routes'),
               'checkout,merge,m-search,notify,subscribe,unsubscribe,' +
               'patch,search,connect').split(',');
 
-var authenticate = require('./authenticate');
+// Authentication and authorisation
+var authenticate = require('./authenticate'),
+    authorise    = require('./authorise'),
+    youreGood    = function(req, res, next) { next(); };
 
 // Set up route handlers
 Object.keys(routes).forEach(function(route) {
@@ -50,7 +53,11 @@ Object.keys(routes).forEach(function(route) {
       throw new Error('I do not know how to \'' + verb.toUpperCase() + '\' ' + route)
     }
 
-    app[verb](route, routes[route][verb]);
+    // Authorisation middleware follows same schema as routing, with the
+    // exception that omitted route/verb combinations in the data
+    // structure are vacuously authorised
+    app[verb](route, (authorise[route] && authorise[route][verb]) || youreGood,
+                     routes[route][verb]);
   });
 });
 
