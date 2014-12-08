@@ -4,7 +4,7 @@
 // HTTP methods must be in lowercase and be any of those supported by
 // Express, with the exception of 'options'
 
-var client = require('./routes/client');
+var client = require('./client');
 
 module.exports = {
   '/': {

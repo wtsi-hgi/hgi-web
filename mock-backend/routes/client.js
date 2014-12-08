@@ -82,4 +82,4 @@ module.exports = {
     patch:  notDoneYet, // Patch client function data
     delete: notDoneYet  // Delete client function data
   }
-}
+};
