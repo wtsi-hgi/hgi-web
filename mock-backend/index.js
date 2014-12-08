@@ -11,20 +11,11 @@ require('node-env-file')(__dirname + '/.env');
 var express = require('express'),
     app     = express();
 
-var routes  = require('./routes'),
-    allowed = ('get,post,put,head,delete,trace,copy,lock,mkcol,move,' + 
-              'purge,propfind,proppatch,unlock,report,mkactivity,' +
-              'checkout,merge,m-search,notify,subscribe,unsubscribe,' +
-              'patch,search,connect').split(',');
-
-// Authentication and authorisation
-var authenticate = require('./authenticate'),
-    authorise    = require('./authorise'),
-    youreGood    = function(req, res, next) { next(); };
+// Middleware
+var security = require('./security'),
+    morgan   = require('morgan');
 
 // Logging
-var morgan = require('morgan');
-
 app.use(morgan('dev'));
 if (process.env.LOG_FILE) {
   var fs        = require('fs'),
@@ -33,12 +24,19 @@ if (process.env.LOG_FILE) {
   app.use(morgan('combined', {stream: logStream}));
 }
 
+// Routing
+var routes  = require('./routes'),
+    allowed = ('get,post,put,head,delete,trace,copy,lock,mkcol,move,' + 
+              'purge,propfind,proppatch,unlock,report,mkactivity,' +
+              'checkout,merge,m-search,notify,subscribe,unsubscribe,' +
+              'patch,search,connect').split(',');
+
 // Set up route handlers
 Object.keys(routes).forEach(function(route) {
   var routeVerbs = Object.keys(routes[route]);
 
   // Catch all middleware for 401 and 405s
-  app.all(route, authenticate, function(req, res, next) {
+  app.all(route, security.authenticate, function(req, res, next) {
     var verb = req.method.toLowerCase();
 
     if (verb == 'options' || routeVerbs.indexOf(verb) != -1) {
@@ -70,8 +68,8 @@ Object.keys(routes).forEach(function(route) {
     // Authorisation middleware follows same schema as routing, with the
     // exception that omitted route/verb combinations in the data
     // structure are vacuously authorised
-    app[verb](route, (authorise[route] && authorise[route][verb]) || youreGood,
-                     routes[route][verb]);
+    var authorise = security.authorise[route] && security.authorise[route][verb];
+    app[verb](route, authorise || security.youreGood, routes[route][verb]);
   });
 });
 
