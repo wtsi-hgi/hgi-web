@@ -5,6 +5,9 @@
 // AGPLv3 or later
 // Copyright (c) 2014 Genome Research Limited
 
+// Setup environment
+require('node-env-file')(__dirname + '/.env');
+
 var express = require('express'),
     app     = express();
 
@@ -18,6 +21,17 @@ var routes  = require('./routes'),
 var authenticate = require('./authenticate'),
     authorise    = require('./authorise'),
     youreGood    = function(req, res, next) { next(); };
+
+// Logging
+var morgan = require('morgan');
+
+app.use(morgan('dev'));
+if (process.env.LOG_FILE) {
+  var fs        = require('fs'),
+      logStream = fs.createWriteStream(__dirname + '/' + process.env.LOG_FILE, {flags: 'a'});
+
+  app.use(morgan('combined', {stream: logStream}));
+}
 
 // Set up route handlers
 Object.keys(routes).forEach(function(route) {
@@ -62,6 +76,6 @@ Object.keys(routes).forEach(function(route) {
 });
 
 // Start server
-var server = app.listen(3000, function() {
-  console.log('listening...');
+var server = app.listen(process.env.PORT, function() {
+  console.log('Listening on', process.env.PORT);
 });

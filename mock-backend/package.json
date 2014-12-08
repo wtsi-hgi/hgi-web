@@ -1,15 +1,14 @@
 {
-  "name": "mock-backend",
+  "author": "Christopher Harrison",
+  "name": "hgi-web-mock-backend",
   "version": "0.0.1",
+  "license": "AGPLv3",
   "description": "Mock API server",
+  "private": true,
   "main": "index.js",
   "dependencies": {
-    "express": "^4.10.4"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Christopher Harrison",
-  "license": "AGPLv3"
+    "express": "*",
+    "node-env-file": "*",
+    "morgan": "*"
+  }
 }
