@@ -17,19 +17,25 @@ var clients = {
   }
 };
 
-var clientKeys = Object.keys(clients),
-    dataKeys   = {};
+// This is nasty, but only temporary!
+var objAt = function(object, path) {
+  var pointer = object;
 
-clientKeys.forEach(function(client) {
-  dataKeys[client] = Object.keys(clients[client]);
-});
+  // path should be array of strings
+  path.forEach(function(p) {
+    try      { pointer = pointer[p]; }
+    catch(e) { return false; }
+  });
+
+  return pointer;
+};
 
 module.exports = {
   root: {
     get: function(req, res) {
-      // TODO
+      // TODO JSON Collection
       res.type('json');
-      res.send(clientKeys);
+      res.send(Object.keys(clients));
     },
 
     post:   notDoneYet, // Create new client
@@ -38,12 +44,13 @@ module.exports = {
 
   id: {
     get: function(req, res) {
-      var clientID = req.params.id;
+      var clientID = req.params.id,
+          clientObj;
 
-      if (clientKeys.indexOf(clientID) != -1) {
-        // TODO
+      if (clientObj = objAt(clients, [clientID])) {
+        // TODO JSON Collection
         res.type('json');
-        res.send(dataKeys[clientID]);
+        res.send(clientObj);
 
       } else {
         // Not cool
@@ -51,25 +58,27 @@ module.exports = {
       }
     },
 
-    post:   notDoneYet, // Create new client function
-    delete: notDoneYet  // Delete client function
+    post:   notDoneYet, // Create new client database
+    delete: notDoneYet  // Delete client database
   },
 
-  fn: {
+  data: {
     get: function(req, res) {
       var clientID = req.params.id,
-          dataID   = req.params.fn;
+          dataID   = req.params.data,
+          subPath  = req.params[0] ? req.params[0].substr(1).split('/') : [],
+          dataObj;
 
-      if (clientKeys.indexOf(clientID) != -1) {
-        if (dataKeys[clientID].indexOf(dataID) != -1) {
-
-          // TODO
+      if (objAt(clients, [clientID])) {
+        if (dataObj = objAt(clients, [clientID, dataID].concat(subPath))) {
+          // TODO JSON Collection
           res.type('json');
-          res.send(clients[clientID][dataID]);
+          res.send(dataObj);
 
         } else {
           // Not cool
-          res.status(404).send('\'' + clientID + '\' has no \'' + dataID + '\' resource');
+          var dataKey = dataID + req.params[0];
+          res.status(404).send('\'' + clientID + '\' has no \'' + dataKey + '\' data resource');
         }
       } else {
         // Not cool
@@ -77,9 +86,9 @@ module.exports = {
       }
     },
 
-    post:   notDoneYet, // Create client function data
-    put:    notDoneYet, // Update client function data
-    patch:  notDoneYet, // Patch client function data
-    delete: notDoneYet  // Delete client function data
+    post:   notDoneYet, // Create client database data
+    put:    notDoneYet, // Update client database data
+    patch:  notDoneYet, // Patch client database data
+    delete: notDoneYet  // Delete client database data
   }
 };

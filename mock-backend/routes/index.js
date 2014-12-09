@@ -20,7 +20,7 @@ module.exports = {
     }
   },
 
-  '/_client':         client.root,
-  '/_client/:id':     client.id,
-  '/_client/:id/:fn': client.fn
+  '/_client':            client.root,
+  '/_client/:id':        client.id,
+  '/_client/:id/:data*': client.data
 };
