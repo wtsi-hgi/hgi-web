@@ -8,7 +8,8 @@
   "main": "index.js",
   "dependencies": {
     "express": "*",
-    "node-env-file": "*",
-    "morgan": "*"
+    "mongodb": "*",
+    "morgan": "*",
+    "node-env-file": "*"
   }
 }

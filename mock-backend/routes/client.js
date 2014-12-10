@@ -30,65 +30,67 @@ var objAt = function(object, path) {
   return pointer;
 };
 
-module.exports = {
-  root: {
-    get: function(req, res) {
-      // TODO JSON Collection
-      res.type('json');
-      res.send(Object.keys(clients));
-    },
-
-    post:   notDoneYet, // Create new client
-    delete: notDoneYet  // Delete client
-  },
-
-  id: {
-    get: function(req, res) {
-      var clientID = req.params.id,
-          clientObj;
-
-      if (clientObj = objAt(clients, [clientID])) {
+module.exports = function(db) {
+  return {
+    root: {
+      get: function(req, res) {
         // TODO JSON Collection
         res.type('json');
-        res.send(clientObj);
+        res.send(Object.keys(clients));
+      },
 
-      } else {
-        // Not cool
-        res.status(404).send('No such client \'' + clientID + '\'');
-      }
+      post:   notDoneYet, // Create new client
+      delete: notDoneYet  // Delete client
     },
 
-    post:   notDoneYet, // Create new client database
-    delete: notDoneYet  // Delete client database
-  },
+    id: {
+      get: function(req, res) {
+        var clientID = req.params.id,
+            clientObj;
 
-  data: {
-    get: function(req, res) {
-      var clientID = req.params.id,
-          dataID   = req.params.data,
-          subPath  = req.params[0] ? req.params[0].substr(1).split('/') : [],
-          dataObj;
-
-      if (objAt(clients, [clientID])) {
-        if (dataObj = objAt(clients, [clientID, dataID].concat(subPath))) {
+        if (clientObj = objAt(clients, [clientID])) {
           // TODO JSON Collection
           res.type('json');
-          res.send(dataObj);
+          res.send(clientObj);
 
         } else {
           // Not cool
-          var dataKey = dataID + req.params[0];
-          res.status(404).send('\'' + clientID + '\' has no \'' + dataKey + '\' data resource');
+          res.status(404).send('No such client \'' + clientID + '\'');
         }
-      } else {
-        // Not cool
-        res.status(404).send('No such client \'' + clientID + '\'');
-      }
+      },
+
+      post:   notDoneYet, // Create new client database
+      delete: notDoneYet  // Delete client database
     },
 
-    post:   notDoneYet, // Create client database data
-    put:    notDoneYet, // Update client database data
-    patch:  notDoneYet, // Patch client database data
-    delete: notDoneYet  // Delete client database data
-  }
+    data: {
+      get: function(req, res) {
+        var clientID = req.params.id,
+            dataID   = req.params.data,
+            subPath  = req.params[0] ? req.params[0].substr(1).split('/') : [],
+            dataObj;
+
+        if (objAt(clients, [clientID])) {
+          if (dataObj = objAt(clients, [clientID, dataID].concat(subPath))) {
+            // TODO JSON Collection
+            res.type('json');
+            res.send(dataObj);
+
+          } else {
+            // Not cool
+            var dataKey = dataID + req.params[0];
+            res.status(404).send('\'' + clientID + '\' has no \'' + dataKey + '\' data resource');
+          }
+        } else {
+          // Not cool
+          res.status(404).send('No such client \'' + clientID + '\'');
+        }
+      },
+
+      post:   notDoneYet, // Create client database data
+      put:    notDoneYet, // Update client database data
+      patch:  notDoneYet, // Patch client database data
+      delete: notDoneYet  // Delete client database data
+    }
+  };
 };

@@ -1,9 +1,11 @@
 // AGPLv3 or later
 // Copyright (c) 2014 Genome Research Limited
 
-module.exports = {
-  authenticate: require('./authenticate'),
-  authorise:    require('./authorise'),
+module.exports = function(db) {
+  return {
+    authenticate: require('./authenticate'),
+    authorise:    require('./authorise')(db),
 
-  youreGood:    function(req, res, next) { next(); }
+    youreGood:    function(req, res, next) { next(); }
+  };
 };
