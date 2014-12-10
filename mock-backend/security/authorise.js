@@ -6,7 +6,4 @@ var computerSaysNo = function(req, res) {
   res.status(403).send('Forbidden');
 };
 
-module.exports = function(db) {
-  // TODO
-  return {}; 
-};
+module.exports = {};

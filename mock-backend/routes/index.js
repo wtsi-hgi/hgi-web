@@ -4,25 +4,23 @@
 // HTTP methods must be in lowercase and be any of those supported by
 // Express, with the exception of 'options'
 
-module.exports = function(db) {
-  var client = require('./client')(db);
+var client = require('./client');
 
-  return {
-    '/': {
-      get: function(req, res) {
-        res.type('json');
-        res.send('"Hello world!"');
-      }
-    },
+module.exports = {
+  '/': {
+    get: function(req, res) {
+      res.type('json');
+      res.send('"Hello world!"');
+    }
+  },
 
-    '/_xyzzy': {
-      get: function(req, res) {
-        res.status(418).send('I\'m a teapot');
-      }
-    },
+  '/_xyzzy': {
+    get: function(req, res) {
+      res.status(418).send('I\'m a teapot');
+    }
+  },
 
-    '/_client':            client.root,
-    '/_client/:id':        client.id,
-    '/_client/:id/:data*': client.data
-  };
+  '/_client':            client.root,
+  '/_client/:id':        client.id,
+  '/_client/:id/:data*': client.data
 };

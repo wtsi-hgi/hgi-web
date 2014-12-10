@@ -28,8 +28,14 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
     });
   });
 
+  // Thread DB through all requests
+  app.use(function(req, res, next) {
+    req.db = db;
+    next();
+  });
+
   // Middleware
-  var security = require('./security')(db),
+  var security = require('./security'),
       morgan   = require('morgan');
 
   // Logging
@@ -42,7 +48,7 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
   }
 
   // Routing
-  var routes  = require('./routes')(db),
+  var routes  = require('./routes'),
       allowed = ('get,post,put,head,delete,trace,copy,lock,mkcol,move,' + 
                 'purge,propfind,proppatch,unlock,report,mkactivity,' +
                 'checkout,merge,m-search,notify,subscribe,unsubscribe,' +
