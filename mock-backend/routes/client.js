@@ -4,6 +4,34 @@
 var mongo = require('mongodb').MongoClient,
     noid  = {'_id': 0};
 
+// Error handling
+var ServerError = function(status, message) {
+  this.status  = status;
+  this.message = message;
+};
+
+ServerError.prototype = Object.create(Error.prototype);
+ServerError.prototype.name = 'ServerError';
+
+var handleError = function(err, req, res) {
+  if (err) {
+    var statusMessage = {
+      '404': 'Not Found',
+      '500': 'Internal Server Error',
+      '501': 'Not Implemented',
+      '502': 'Bad Gateway'
+    };
+
+    // Don't throw, we want to keep the server up
+    res.status(err.status)
+       .send(statusMessage[err.status] + (err.message ? ': ' + err.message : ''));
+  }
+};
+
+var notDoneYet = function(req, res) {
+  handleError(new ServerError(501), req, res);
+};
+
 // Connection pool of client gateways
 var clientGateway = (function() {
   var gateways = {};
@@ -14,14 +42,13 @@ var clientGateway = (function() {
   var main = function(name, callback) {
     if (!gateways.hasOwnProperty(name)) {
       // No such client
-      var err = new Error('No such client');
-      callback(err, null);
+      callback(new ServerError(404, 'No such client \'' + name + '\''), null);
 
     } else {
       if (!gateways[name].db) {
         mongo.connect(gateways[name].href, function(err, db) {
           if (err) {
-            callback(err, null);
+            callback(new ServerError(502, err.message), null);
           } else {
             console.log('Connected to %s client database', name);
             gateways[name].db = db;
@@ -46,11 +73,11 @@ var clientGateway = (function() {
     // Attempt to open the _client collection
     db.collection('_client', {strict: true}, function(err, clients) {
       if (err && !clients) {
-        callback(err, null);
+        callback(new ServerError(500, err.message), null);
       } else {
         clients.find({}, noid).toArray(function(err, clientData) {
           if (err) {
-            callback(err, null);
+            callback(new ServerError(500, err.message), null);
           } else {
             // Update cache
             clientData.forEach(function(client) {
@@ -94,22 +121,13 @@ var clientGateway = (function() {
   return main;
 })();
 
-var notDoneYet = function(req, res) {
-  res.status(501).send('Not Implemented');
-};
-
-var ohCrap = function(err, req, res) {
-  res.status(500)
-     .send('Internal Server Error: ' + err.message);
-};
-
 module.exports = { 
   root: {
     get: function(req, res) {
       // Get list of registered clients
       clientGateway.init(req.db, function(err, clients) {
         if (err) {
-          ohCrap(err, req, res);
+          handleError(err, req, res);
         
         } else {
           // TODO Hypermedia content
@@ -127,13 +145,13 @@ module.exports = {
     get: function(req, res) {
       clientGateway.init(req.db, function(err, clients) {
         if (err) {
-          ohCrap(err, req, res);
+          handleError(err, req, res);
         
         } else {
           var clientID = req.params.id;
           clientGateway(clientID, function(err, clientDB) {
             if (err) {
-              ohCrap(err, req, res);
+              handleError(err, req, res);
 
             } else {
               clientDB.collectionNames(function(err, collections) {
@@ -143,37 +161,6 @@ module.exports = {
           });
         }
       });
-
-
-      // req.db.collection('_client', {strict: true}, function(err, clients) {
-      //   if (err && !clients) {
-      //     ohCrap(err, req, res);
-
-      //   } else {
-      //     var clientID = req.params.id;
-      //     clients.findOne({'name': clientID}, {'_id': 0}, function(err, client) {
-      //       if (err) {
-      //         ohCrap(err, req, res);
-      //       } else if (!client) {
-      //         // Not cool
-      //         res.status(404).send('No such client \'' + clientID + '\'');
-      //       } else {
-      //         var gateway = client.href || '';
-      //         
-      //         mongo.connect(gateway, function(err, clientDB) {
-      //           if (err && !clientDB) {
-      //             res.status(502).send('Bad Gateway');
-      //           } else {
-      //             clientDB.collectionNames(function(err, collections) {
-      //               res.send(collections);
-      //               clientDB.close();
-      //             });
-      //           }
-      //         });
-      //       }
-      //     });
-      //   }
-      // });
     },
 
     post:   notDoneYet, // Create new client database
