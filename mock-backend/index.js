@@ -20,12 +20,10 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
   console.log('Connected to %s database', db.databaseName);
 
   // Close DB connection and exit cleanly on SIGINT
-  process.on('SIGINT', function() {
-    db.close(function(err, result) {
-      if (err) { throw err; }
-      console.log('Connection to database closed');
-      process.exit();
-    });
+  process.on('SIGINT', function() { db.close(); });
+  db.on('close', function() {
+    console.log('Connection to API database closed');
+    process.exit();
   });
 
   // Thread DB through all requests
