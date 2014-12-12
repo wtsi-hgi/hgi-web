@@ -67,6 +67,7 @@ var clientGateway = (function() {
         mongo.connect(gateways[name].url, function(err, db) {
           if (err) {
             callback(new ServerError(502, err.message), null);
+
           } else {
             console.log('Connected to %s client database', name);
             gateways[name].db = db;
@@ -78,6 +79,7 @@ var clientGateway = (function() {
             callback(null, gateways[name].db);
           }
         });
+
       } else {
         callback(null, gateways[name].db);
       }
@@ -92,6 +94,7 @@ var clientGateway = (function() {
     db.collection('_client', {strict: true}, function(err, clients) {
       if (err && !clients) {
         callback(new ServerError(500, err.message), null);
+
       } else {
         clients.find({name: exists, url: exists}, noid).toArray(function(err, clientData) {
           if (err) {
@@ -107,6 +110,7 @@ var clientGateway = (function() {
                 if (gateways[client.name].url != client.url) {
                   refreshConnection = true;
                 }
+
               } else {
                 gateways[client.name] = {};
                 refreshConnection = true;
@@ -200,28 +204,30 @@ module.exports = {
   },
 
   data: {
-    get: function(req, res) {
-      var clientID = req.params.id,
-          dataID   = req.params.data,
-          subPath  = req.params[0] ? req.params[0].substr(1).split('/') : [],
-          dataObj;
+    get: notDoneYet,
 
-      if (objAt(clients, [clientID])) {
-        if (dataObj = objAt(clients, [clientID, dataID].concat(subPath))) {
-          // TODO Hypermedia content
-          res.type('json');
-          res.send(dataObj);
+    // get: function(req, res) {
+    //   var clientID = req.params.id,
+    //       dataID   = req.params.data,
+    //       subPath  = req.params[0] ? req.params[0].substr(1).split('/') : [],
+    //       dataObj;
 
-        } else {
-          // Not cool
-          var dataKey = dataID + req.params[0];
-          res.status(404).send('\'' + clientID + '\' has no \'' + dataKey + '\' data resource');
-        }
-      } else {
-        // Not cool
-        res.status(404).send('No such client \'' + clientID + '\'');
-      }
-    },
+    //   if (objAt(clients, [clientID])) {
+    //     if (dataObj = objAt(clients, [clientID, dataID].concat(subPath))) {
+    //       // TODO Hypermedia content
+    //       res.type('json');
+    //       res.send(dataObj);
+
+    //     } else {
+    //       // Not cool
+    //       var dataKey = dataID + req.params[0];
+    //       res.status(404).send('\'' + clientID + '\' has no \'' + dataKey + '\' data resource');
+    //     }
+    //   } else {
+    //     // Not cool
+    //     res.status(404).send('No such client \'' + clientID + '\'');
+    //   }
+    // },
 
     post:   notDoneYet, // Create client collection data
     put:    notDoneYet, // Update client collection data
