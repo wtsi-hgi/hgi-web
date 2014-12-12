@@ -1,9 +1,8 @@
 // AGPLv3 or later
 // Copyright (c) 2014 Genome Research Limited
 
-var mongo  = require('mongodb').MongoClient,
-    exists = {'$exists': true}
-    noid   = {'_id': false};
+var mongo    = require('mongodb').MongoClient,
+    ObjectID = require('mongodb').ObjectID;
 
 // Error handling
 var ServerError = function(status, message) {
@@ -18,6 +17,7 @@ ServerError.prototype.name = 'ServerError';
 // Expand as necessary...
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 ServerError.prototype.httpStatus = {
+  '400': 'Bad Request',
   '404': 'Not Found',
   '500': 'Internal Server Error',
   '501': 'Not Implemented',
@@ -96,7 +96,10 @@ var clientGateway = (function() {
         callback(new ServerError(500, err.message), null);
 
       } else {
-        clients.find({name: exists, url: exists}, noid).toArray(function(err, clientData) {
+        var exists = {'$exists': true},
+            schema = {name: exists, url: exists};
+
+        clients.find(schema, {'_id': false}).toArray(function(err, clientData) {
           if (err) {
             callback(new ServerError(500, err.message), null);
 
@@ -191,6 +194,7 @@ module.exports = {
                     return !/^system\./.test(c.name);
                   });
 
+                // TODO Hypermedia content
                 res.send(clientCollections);
               });
             }
@@ -204,30 +208,74 @@ module.exports = {
   },
 
   data: {
-    get: notDoneYet,
+    get: function(req, res) {
+      clientGateway.init(req.db, function(err, clients) {
+        if (err) {
+          err.handle(req, res);
 
-    // get: function(req, res) {
-    //   var clientID = req.params.id,
-    //       dataID   = req.params.data,
-    //       subPath  = req.params[0] ? req.params[0].substr(1).split('/') : [],
-    //       dataObj;
+        } else {
+          var clientID = req.params.id;
+          clientGateway(clientID, function(err, clientDB) {
+            if (err) {
+              err.handle(req, res);
 
-    //   if (objAt(clients, [clientID])) {
-    //     if (dataObj = objAt(clients, [clientID, dataID].concat(subPath))) {
-    //       // TODO Hypermedia content
-    //       res.type('json');
-    //       res.send(dataObj);
+            } else {
+              var collectionID = req.params.coll;
+              clientDB.collection(collectionID, {strict: true}, function(err, collection) {
+                if (err) {
+                  // FIXME I think this will *always* 404. Is there a 
+                  // better way to determine the type of error than a
+                  // hardcoded textual comparison?
+                  if (!collection) {
+                    (new ServerError(404, 'No such collection \'' + collectionID + '\'')).handle(req, res);
+                  } else {
+                    (new ServerError(500, err.message)).handle(req, res);
+                  }
 
-    //     } else {
-    //       // Not cool
-    //       var dataKey = dataID + req.params[0];
-    //       res.status(404).send('\'' + clientID + '\' has no \'' + dataKey + '\' data resource');
-    //     }
-    //   } else {
-    //     // Not cool
-    //     res.status(404).send('No such client \'' + clientID + '\'');
-    //   }
-    // },
+                } else {
+                  if (req.params.doc) {
+                    // Get the specific document
+                    var documentID = (function(id) {
+                      try {
+                        var docID = new ObjectID(id);
+                      } catch(e) { 
+                        docID = null;
+                      }
+                      return docID;
+                    })(req.params.doc);
+
+                    collection.findOne({'_id': documentID}, function(err, document) {
+                      if (err) {
+                        (new ServerError(500, err.message)).handle(req, res);
+                      
+                      } else if (!documentID) {
+                        (new ServerError(400, 'Invalid ObjectID')).handle(req, res);
+
+                      } else if (!document) {
+                        (new ServerError(404, 'No such document with ObjectID(\'' + documentID + '\')')).handle(req, res);
+
+                      } else {
+                        // TODO Hypermedia content
+                        res.type('json');
+                        res.send(document);
+                      }
+                    });
+
+                  } else {
+                    // Get the whole collection
+                    collection.find().toArray(function(err, data) {
+                      // TODO Hypermedia content
+                      res.type('json');
+                      res.send(data);
+                    });
+                  }
+                }
+              });
+            }
+          });
+        }
+      });
+    },
 
     post:   notDoneYet, // Create client collection data
     put:    notDoneYet, // Update client collection data
