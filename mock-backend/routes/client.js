@@ -1,8 +1,9 @@
 // AGPLv3 or later
 // Copyright (c) 2014 Genome Research Limited
 
-var mongo = require('mongodb').MongoClient,
-    noid  = {'_id': 0};
+var mongo  = require('mongodb').MongoClient,
+    exists = {'$exists': true}
+    noid   = {'_id': false};
 
 // Error handling
 var ServerError = function(status, message) {
@@ -63,14 +64,14 @@ var clientGateway = (function() {
 
     } else {
       if (!gateways[name].db) {
-        mongo.connect(gateways[name].href, function(err, db) {
+        mongo.connect(gateways[name].url, function(err, db) {
           if (err) {
             callback(new ServerError(502, err.message), null);
           } else {
             console.log('Connected to %s client database', name);
             gateways[name].db = db;
             db.on('close', function() {
-              console.log('Connection to client database closed');
+              console.log('Connection to %s client database closed', name);
               gateways[name].db = null;
             });
 
@@ -92,9 +93,10 @@ var clientGateway = (function() {
       if (err && !clients) {
         callback(new ServerError(500, err.message), null);
       } else {
-        clients.find({}, noid).toArray(function(err, clientData) {
+        clients.find({name: exists, url: exists}, noid).toArray(function(err, clientData) {
           if (err) {
             callback(new ServerError(500, err.message), null);
+
           } else {
             // Update cache
             clientData.forEach(function(client) {
@@ -102,7 +104,7 @@ var clientGateway = (function() {
 
               // Check if we need to do anything...
               if (gateways.hasOwnProperty(client.name)) {
-                if (gateways[client.name].href != client.href) {
+                if (gateways[client.name].url != client.url) {
                   refreshConnection = true;
                 }
               } else {
@@ -113,7 +115,7 @@ var clientGateway = (function() {
               // ...and if we do
               if (refreshConnection) {
                 var gateway = gateways[client.name];
-                gateway.href = client.href;
+                gateway.url = client.url;
                 if (gateway.db) { gateway.db.close(); }
               }
             });
@@ -155,8 +157,9 @@ module.exports = {
       });
     },
 
-    post:   notDoneYet, // Create new client
-    delete: notDoneYet  // Delete client
+    post:   notDoneYet, // Create new client gateway
+    put:    notDoneYet, // Update client gateway
+    delete: notDoneYet  // Delete client gateway
   },
 
   id: {
@@ -173,7 +176,18 @@ module.exports = {
 
             } else {
               clientDB.collectionNames(function(err, collections) {
-                res.send(collections);
+                var clientCollections = collections
+                  .map(function(c) {
+                    // Strip database name
+                    c.name = c.name.replace(clientDB.databaseName + '.', '');
+                    return c;
+                  })
+                  .filter(function(c) {
+                    // Remove system collections
+                    return !/^system\./.test(c.name);
+                  });
+
+                res.send(clientCollections);
               });
             }
           });
@@ -181,8 +195,8 @@ module.exports = {
       });
     },
 
-    post:   notDoneYet, // Create new client database
-    delete: notDoneYet  // Delete client database
+    post:   notDoneYet, // Create new client collection
+    delete: notDoneYet  // Delete client collection
   },
 
   data: {
@@ -209,9 +223,9 @@ module.exports = {
       }
     },
 
-    post:   notDoneYet, // Create client database data
-    put:    notDoneYet, // Update client database data
-    patch:  notDoneYet, // Patch client database data
-    delete: notDoneYet  // Delete client database data
+    post:   notDoneYet, // Create client collection data
+    put:    notDoneYet, // Update client collection data
+    patch:  notDoneYet, // Patch client collection data
+    delete: notDoneYet  // Delete client collection data
   }
 };

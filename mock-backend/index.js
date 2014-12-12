@@ -17,7 +17,7 @@ var mongo   = require('mongodb').MongoClient,
 // all our middleware functions before starting the API server
 mongo.connect(process.env.DB_SOURCE, function(err, db) {
   if (err) { throw err; }
-  console.log('Connected to %s database', db.databaseName);
+  console.log('Connected to %s API database', db.databaseName);
 
   // Thread DB through all requests
   app.use(function(req, res, next) {
