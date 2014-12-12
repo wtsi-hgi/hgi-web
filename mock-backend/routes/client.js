@@ -11,25 +11,42 @@ var ServerError = function(status, message) {
 };
 
 ServerError.prototype = Object.create(Error.prototype);
+ServerError.prototype.constructor = ServerError;
 ServerError.prototype.name = 'ServerError';
 
-var handleError = function(err, req, res) {
-  if (err) {
-    var statusMessage = {
-      '404': 'Not Found',
-      '500': 'Internal Server Error',
-      '501': 'Not Implemented',
-      '502': 'Bad Gateway'
-    };
-
-    // Don't throw, we want to keep the server up
-    res.status(err.status)
-       .send(statusMessage[err.status] + (err.message ? ': ' + err.message : ''));
-  }
+// Expand as necessary...
+// http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+ServerError.prototype.httpStatus = {
+  '404': 'Not Found',
+  '500': 'Internal Server Error',
+  '501': 'Not Implemented',
+  '502': 'Bad Gateway'
 };
 
+// Don't throw, we want to keep the server up
+ServerError.prototype.handle = function(req, res) {
+  var message = this.httpStatus[this.status] || 'Unknown Error';
+  if (this.message) { message += ': ' + this.message; }
+
+  res.status(this.status).send(message);
+};
+
+// 501 Lazy Developer
 var notDoneYet = function(req, res) {
-  handleError(new ServerError(501), req, res);
+  var excuse = (function() {
+    var excuses = [  
+      'Rome wasn\'t built in a day',
+      'Give me a chance!',
+      'Whip the lazy developer',
+      '...',
+      'It\'s too late for me. Save yourselves!',
+      'I\'m waiting to be motivated'
+    ];
+
+    return excuses[Math.floor(Math.random() * excuses.length)];
+  })();
+
+  (new ServerError(501, excuse)).handle(req, res);
 };
 
 // Connection pool of client gateways
@@ -121,13 +138,14 @@ var clientGateway = (function() {
   return main;
 })();
 
+// OK, now we can actually do the route handlers!
 module.exports = { 
   root: {
     get: function(req, res) {
       // Get list of registered clients
       clientGateway.init(req.db, function(err, clients) {
         if (err) {
-          handleError(err, req, res);
+          err.handle(req, res);
         
         } else {
           // TODO Hypermedia content
@@ -145,13 +163,13 @@ module.exports = {
     get: function(req, res) {
       clientGateway.init(req.db, function(err, clients) {
         if (err) {
-          handleError(err, req, res);
+          err.handle(req, res);
         
         } else {
           var clientID = req.params.id;
           clientGateway(clientID, function(err, clientDB) {
             if (err) {
-              handleError(err, req, res);
+              err.handle(req, res);
 
             } else {
               clientDB.collectionNames(function(err, collections) {
