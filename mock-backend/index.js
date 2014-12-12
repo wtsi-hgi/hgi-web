@@ -19,13 +19,6 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
   if (err) { throw err; }
   console.log('Connected to %s database', db.databaseName);
 
-  // Close DB connection and exit cleanly on SIGINT
-  process.on('SIGINT', function() { db.close(); });
-  db.on('close', function() {
-    console.log('Connection to API database closed');
-    process.exit();
-  });
-
   // Thread DB through all requests
   app.use(function(req, res, next) {
     req.db = db;
@@ -92,6 +85,13 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
       var authorise = security.authorise[route] && security.authorise[route][verb];
       app[verb](route, authorise || security.youreGood, routes[route][verb]);
     });
+  });
+
+  // Close DB connection and exit cleanly on SIGINT
+  process.on('SIGINT', function() { db.close(); });
+  db.on('close', function() {
+    console.log('Connection to API database closed');
+    process.exit();
   });
 
   // Start API server
