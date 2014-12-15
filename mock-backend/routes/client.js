@@ -128,12 +128,13 @@ var clientGateway = (function() {
 
               // Update timeout
               // FIXME? I'm not sure this is doing what I expect it to
-              (function() {
-                gateway.timeout = clearTimeout(gateway.timeout);
-                gateway.timeout = setTimeout(function() {
-                  if (gateway.db) { gateway.db.close(); }
-                }, timeout * 1000);
-              })();
+              gateway.timeout = clearTimeout(gateway.timeout);
+              gateway.timeout = setTimeout((function(c) {
+                var gw = gateways[c];
+                return function() {
+                  if (gw.db) { gw.db.close(); }
+                };
+              })(client.name), timeout * 1000);
             });
 
             // Return list of clients
