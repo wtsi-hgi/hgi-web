@@ -52,7 +52,8 @@ var notDoneYet = function(req, res) {
 
 // Connection pool of client gateways
 var clientGateway = (function() {
-  var gateways = {};
+  var gateways = {},
+      timeout  = 300; // seconds
 
   // Access client database
   // name :: Client name
@@ -92,7 +93,7 @@ var clientGateway = (function() {
   main.init = function(db, callback) {
     // Attempt to open the _client collection
     db.collection('_client', {strict: true}, function(err, clients) {
-      if (err && !clients) {
+      if (err) {
         callback(new ServerError(500, err.message), null);
 
       } else {
@@ -106,25 +107,33 @@ var clientGateway = (function() {
           } else {
             // Update cache
             clientData.forEach(function(client) {
-              var refreshConnection = false;
+              var refreshConnection = false,
+                  gateway;
 
               // Check if we need to do anything...
               if (gateways.hasOwnProperty(client.name)) {
-                if (gateways[client.name].url != client.url) {
-                  refreshConnection = true;
-                }
+                gateway = gateways[client.name];
+                refreshConnection = (gateway.url != client.url);
 
               } else {
-                gateways[client.name] = {};
+                gateway = gateways[client.name] = {};
                 refreshConnection = true;
               }
 
               // ...and if we do
               if (refreshConnection) {
-                var gateway = gateways[client.name];
                 gateway.url = client.url;
                 if (gateway.db) { gateway.db.close(); }
               }
+
+              // Update timeout
+              // FIXME? I'm not sure this is doing what I expect it to
+              (function() {
+                gateway.timeout = clearTimeout(gateway.timeout);
+                gateway.timeout = setTimeout(function() {
+                  if (gateway.db) { gateway.db.close(); }
+                }, timeout * 1000);
+              })();
             });
 
             // Return list of clients
