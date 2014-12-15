@@ -223,14 +223,20 @@ module.exports = {
               var collectionID = req.params.coll;
               clientDB.collection(collectionID, {strict: true}, function(err, collection) {
                 if (err) {
-                  // FIXME I think this will *always* 404. Is there a 
-                  // better way to determine the type of error than a
-                  // hardcoded textual comparison?
-                  if (!collection) {
-                    (new ServerError(404, 'No such collection \'' + collectionID + '\'')).handle(req, res);
-                  } else {
-                    (new ServerError(500, err.message)).handle(req, res);
-                  }
+                  // Check that collection actually exists
+                  clientDB.collection('system.namespaces')
+                    .find({name: clientDB.databaseName + '.' + collectionID})
+                    .count(function(foo, n) {
+                      var status  = 500,
+                          message = err.message;
+
+                      if (n == 0) {
+                        status  = 404;
+                        message = 'No such collection \'' + collectionID + '\'';
+                      }
+
+                      (new ServerError(status, message)).handle(req, res);
+                    });
 
                 } else {
                   if (req.params.doc) {
