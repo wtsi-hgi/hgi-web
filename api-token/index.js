@@ -14,18 +14,33 @@ var http   = require('http'),
 // Load private key
 var privateKey = fs.readFileSync(process.env.KEYFILE);
 
-// Invalid request handler
-var BadRequest = function(message) {
+// Error handling
+var HTTPError = function(status, message) {
+  this.status  = status;
   this.message = message;
 };
 
-BadRequest.prototype = Object.create(Error.prototype);
-BadRequest.prototype.constructor = BadRequest;
-BadRequest.prototype.name = 'BadRequest';
+HTTPError.prototype = Object.create(Error.prototype);
+HTTPError.prototype.constructor = HTTPError;
+HTTPError.prototype.name = 'HTTPError';
 
-BadRequest.prototype.handle = function(req, res) {
-  res.writeHead(400, 'Bad Request', {'Content-Type': 'text/html'});
-  res.end('Bad Request: ' + this.message);
+// Expand as necessary...
+// http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+HTTPError.prototype.httpStatus = {
+  '405': 'Method Not Allowed',
+  '406': 'Not Acceptable',
+  '407': 'Proxy Authentication Failed',
+  '500': 'Internal Server Error'
+};
+
+HTTPError.prototype.handle = function(req, res) {
+  var reason  = this.httpStatus[this.status] || 'Unknown Error',
+      message = reason;
+
+  if (this.message) { message += ': ' + this.message; }
+
+  res.writeHead(this.status, reason, {'Content-Type': 'text/html'});
+  res.end(message);
 };
 
 // Templating for output
@@ -107,8 +122,7 @@ var bearerToken = function(user, session, callback) {
       
       // Generate SHA1 HMAC of user:expiration:session:salt
       hmac.setEncoding('base64');
-      hmac.write(message);
-      hmac.end();
+      hmac.end(message);
       var password = hmac.read();
 
       // Return token and basic authentication pair
@@ -124,37 +138,44 @@ var bearerToken = function(user, session, callback) {
 
 // Create provider
 http.createServer(function(req, res) {
+  // These request headers need to be passed through from the reverse
+  // proxy's respective environment variables
+  var authType = req.headers['x-auth-type'],
+      eppn     = req.headers['x-eppn'],
+      session  = req.headers['x-shib-session-id'];
+
   if (req.method == 'GET') {
-   // if (req.headers['x-auth-type']       == 'shibboleth'
-   //  && req.headers['x-eppn']            != ''
-   //  && req.headers['x-shib-session-id'] != '') {
+    if (authType == 'shibboleth' && eppn && session) {
+      // We're good to go :)
+      bearerToken(eppn, session, function(err, token) {
+        if (err) {
+          (new HTTPError(500, err.message)).handle(req, res);
 
-    bearerToken('ch12@sanger.ac.uk', '_4628e2e4fd15572be6211045eab2e427', function(err, token) {
-      if (err) {
-        res.writeHead(500, 'Internal Server Error', {'Content-Type': 'text/html'});
-        res.end('Internal Server Error: ' + err.message);
+        } else {
+          var contentType = req.headers.accept,
+              handler     = acceptMap[contentType];
 
-      } else {
-        var contentType = req.headers.accept,
-            handler     = acceptMap[contentType] || 'json';
+          if (!handler) {
+            (new HTTPError(406)).handle(req, res);
 
-        // Default to JSON
-        // This is a bit ugly, but what can you do!?
-        if (handler == 'json') { contentType = 'application/json'; }
-            
-        res.writeHead(200, {'Content-Type': contentType});
-        res.write(template(handler, token));
-        res.end();
-      }
-    });
+          } else {
+            res.writeHead(200, {
+              'Content-Type':  contentType,
+              'Cache-Control': 'no-store',
+              'Pragma':        'no-cache'
+            });
+            res.end(template(handler, token));
+          }
+        }
+      });
 
-   // } else {
-   //   // Shibboleth attributes not available
-   //   (new BadRequest('Shibboleth attributes unavailable')).handle(req, res);
-   // }
+    } else {
+      // Shibboleth attributes not available
+      (new HTTPError(407, 'Shibboleth attributes unavailable')).handle(req, res);
+    }
   } else {
     // Must GET token
-    (new BadRequest('I only know how to GET')).handle(req, res);
+    (new HTTPError(405)).handle(req, res);
   }
 })
 
