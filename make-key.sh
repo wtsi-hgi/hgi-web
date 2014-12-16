@@ -9,14 +9,14 @@ read -r -d "" USAGE <<EOF
 Usage: make-key.sh [options]
 
 Options:
-  -s SIZE     Key size, in bytes (default 1024)
+  -s SIZE     Key size, in bytes (default 256)
   -o KEYFILE  Key file (default hgi-web.key)
   -h          This useful message
 EOF
 
 # Defaults
 KEYFILE=hgi-web.key
-KEYSIZE=1024
+KEYSIZE=256
 
 # Get command line options
 NUMBER='^[1-9][0-9]*$'
