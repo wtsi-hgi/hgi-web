@@ -52,6 +52,9 @@ var notDoneYet = function(req, res) {
 
 // Connection pool of client gateways
 var clientGateway = (function() {
+  // The gateways cache is a hash, with the client name as key, of the
+  // database URL <.url>, MongoDB database object (if connected; null
+  // otherwise) <.db> and a connection timeout object <.timeout>
   var gateways = {},
       timeout  = 300; // seconds
 
