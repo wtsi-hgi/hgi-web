@@ -7,7 +7,6 @@
 // Setup environment
 require('node-env-file')(__dirname + '/.env');
 
-// Foo
 var http   = require('http'),
     fs     = require('fs'),
     crypto = require('crypto');
@@ -29,6 +28,71 @@ BadRequest.prototype.handle = function(req, res) {
   res.end('Bad Request: ' + this.message);
 };
 
+// Templating for output
+var template = (function() {
+  var templates = {
+    text: 'tokenType=bearer&' +
+          'expiration={{expiration}}&' + 
+          'accessToken={{accessToken}}&' +
+          'basicLogin={{basicLogin}}&' +
+          'basicPassword={{basicPassword}}',
+
+    json: '{"tokenType":"bearer",' +
+          '"expiration":{{expiration}},' +
+          '"accessToken":"{{accessToken}}",' +
+          '"basicLogin":"{{basicLogin}}",' +
+          '"basicPassword":"{{basicPassword}}"}',
+
+    html: '<head><title>API Token</title></head>' +
+          '<body><dl>' +
+          '<dt>tokenType</dt><dd>bearer</dd>' +
+          '<dt>expiration</dt><dd>{{expiration}}</dd>' +
+          '<dt>accessToken</dt><dd>{{accessToken}}</dd>' +
+          '<dt>basicLogin</dt><dd>{{basicLogin}}</dd>' +
+          '<dt>basicPassword</dt><dd>{{basicPassword}}</dd>' +
+          '</dl></body></html>',
+
+    xml:  '<?xml version="1.0" encoding="UTF-8"?>' +
+          '<OAuth>' +
+          '<tokenType>bearer</tokenType>' +
+          '<expiration>{{expiration}}</expiration>' +
+          '<accessToken>{{accessToken}}</accessToken>' +
+          '<basicLogin>{{basicLogin}}</basicLogin>' +
+          '<basicPassword>{{basicPassword}}</basicPassword>' +
+          '</OAuth>'
+  };
+
+  templates.xhtml =
+    '<?xml version="1.0" encoding="UTF-8"?>' + 
+    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">' + 
+    '<html xmlns="http://www.w3.org/1999/xhtml">' + templates.html;
+
+  templates.html = '<html>' + templates.html;
+
+  return function(template, data) {
+    var output = templates[template] || 'No such template';
+
+    for (key in data) {
+      if (data.hasOwnProperty(key)) {
+        var findKey = new RegExp('{{' + key + '}}', 'g');
+        output = output.replace(findKey, data[key]);
+      }
+    }
+
+    return output;
+  };
+})();
+
+// Accept Content-Type mapping
+var acceptMap = {
+  'application/json':      'json',
+  'application/xhtml+xml': 'xhtml',
+  'application/xml':       'xml',
+  'text/html':             'html',
+  'text/plain':            'text',
+  'text/xml':              'xml'
+}
+
 // Async bearer token generator
 var bearerToken = function(user, session, callback) {
   // Create a 48-bit salt
@@ -39,14 +103,13 @@ var bearerToken = function(user, session, callback) {
     } else {
       var hmac       = crypto.createHmac('sha1', privateKey),
           expiration = Math.floor(Date.now() / 1000) + parseInt(process.env.LIFETIME, 10),
-          message    = [user, expiration, session, salt.toString('base64')].join(':'),
-          password;
+          message    = [user, expiration, session, salt.toString('base64')].join(':');
       
       // Generate SHA1 HMAC of user:expiration:session:salt
       hmac.setEncoding('base64');
       hmac.write(message);
       hmac.end();
-      password = hmac.read();
+      var password = hmac.read();
 
       // Return token and basic authentication pair
       callback(null, {
@@ -66,13 +129,24 @@ http.createServer(function(req, res) {
    //  && req.headers['x-eppn']            != ''
    //  && req.headers['x-shib-session-id'] != '') {
 
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    
     bearerToken('ch12@sanger.ac.uk', '_4628e2e4fd15572be6211045eab2e427', function(err, token) {
-      res.write('<pre>' + JSON.stringify(token, null, '  ') + '</pre>');
-      res.end();
-    });
+      if (err) {
+        res.writeHead(500, 'Internal Server Error', {'Content-Type': 'text/html'});
+        res.end('Internal Server Error: ' + err.message);
 
+      } else {
+        var contentType = req.headers.accept,
+            handler     = acceptMap[contentType] || 'json';
+
+        // Default to JSON
+        // This is a bit ugly, but what can you do!?
+        if (handler == 'json') { contentType = 'application/json'; }
+            
+        res.writeHead(200, {'Content-Type': contentType});
+        res.write(template(handler, token));
+        res.end();
+      }
+    });
 
    // } else {
    //   // Shibboleth attributes not available
