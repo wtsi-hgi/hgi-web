@@ -1,0 +1,12 @@
+{
+  "author": "Christopher Harrison",
+  "name": "api-token",
+  "version": "0.0.1",
+  "license": "AGPLv3",
+  "description": "Bearer token provider",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "node-env-file": "*"
+  }
+}
