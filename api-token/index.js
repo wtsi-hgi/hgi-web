@@ -145,7 +145,7 @@ http.createServer(function(req, res) {
       session  = req.headers['x-shib-session-id'];
 
   if (req.method == 'GET') {
-    if (authType == 'shibboleth' && eppn && session) {
+    if (authType /* == 'shibboleth' */ && eppn && session) {
       // We're good to go :)
       bearerToken(eppn, session, function(err, token) {
         if (err) {
