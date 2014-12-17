@@ -152,11 +152,19 @@ http.createServer(function(req, res) {
           (new HTTPError(500, err.message)).handle(req, res);
 
         } else {
-          var contentType = req.headers.accept,
-              handler     = acceptMap[contentType];
+          var contentType, handler;
+
+          // Parse Accept header
+          req.headers.accept.split(',').some(function(accept) {
+            contentType = accept.split(';')[0].trim();
+            handler     = acceptMap[contentType];
+
+            // Break the loop when we've found a match
+            return handler;
+          });
 
           if (!handler) {
-            (new HTTPError(406)).handle(req, res);
+            (new HTTPError(406, req.headers.accept)).handle(req, res);
 
           } else {
             res.writeHead(200, {
