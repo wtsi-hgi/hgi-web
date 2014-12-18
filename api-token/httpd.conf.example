@@ -2,7 +2,6 @@ LoadModule proxy_module /usr/lib/apache2/modules/mod_proxy.so
 
 <Location /path/to/token>
   # Pass environment variables upstream
-  RequestHeader set X-Auth-Type       %{AUTH_TYPE}e
   RequestHeader set X-EPPN            %{eppn}e
   RequestHeader set X-Shib-Session-ID %{Shib-Session-ID}e
 

@@ -140,12 +140,11 @@ var bearerToken = function(user, session, callback) {
 http.createServer(function(req, res) {
   // These request headers need to be passed through from the reverse
   // proxy's respective environment variables
-  var authType = req.headers['x-auth-type'],
-      eppn     = req.headers['x-eppn'],
+  var eppn     = req.headers['x-eppn'],
       session  = req.headers['x-shib-session-id'];
 
   if (req.method == 'GET') {
-    if (authType /* == 'shibboleth' */ && eppn && session) {
+    if (eppn && session) {
       // We're good to go :)
       bearerToken(eppn, session, function(err, token) {
         if (err) {
