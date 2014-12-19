@@ -1,10 +1,12 @@
-LoadModule proxy_module /usr/lib/apache2/modules/mod_proxy.so
+LoadModule cgi_module modules/mod_cgi.so
+LoadModule cgi_alias  modules/mod_alias.so
 
+Alias /path/to/token /path/to/CGI/provider.js
 <Location /path/to/token>
-  # Pass environment variables upstream
-  RequestHeader set X-EPPN            %{eppn}e
-  RequestHeader set X-Shib-Session-ID %{Shib-Session-ID}e
+  Options +ExecCGI
+  AddHandler cgi-script .js
 
-  ProxyPass         http://localhost:4000 retry=0
-  ProxyPassReverse  http://localhost:4000
+  # These environment variables must be set appropriately
+  SetEnv KEYFILE  /path/to/private/key
+  SetEnv LIFETIME 3600
 </Location>
