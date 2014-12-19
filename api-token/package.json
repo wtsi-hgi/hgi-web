@@ -6,4 +6,7 @@
   "description": "Bearer token provider",
   "private": true,
   "main": "index.js",
+  "dependencies": {
+    "xiongxiong": "*"
+  }
 }

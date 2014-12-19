@@ -199,35 +199,7 @@ try {
 }
 
 // Async bearer token generator
-var bearerToken = function(user, session, callback) {
-  // Create a 48-bit salt
-  crypto.randomBytes(6, function(err, salt) {
-    if (err) {
-      callback(err, null);
-    
-    } else {
-      var hmac       = crypto.createHmac('sha1', privateKey),
-      
-          // LIFETIME should be set in httpd.conf; defaults to 1hr
-          lifetime   = parseInt(process.env.LIFETIME || 3600, 10),
-          expiration = Math.floor(Date.now() / 1000) + lifetime,
-          message    = [user, expiration, session, salt.toString('base64')].join(':');
-      
-      // Generate SHA1 HMAC of user:expiration:session:salt
-      hmac.setEncoding('base64');
-      hmac.end(message);
-      var password = hmac.read();
-
-      // Return token and basic authentication pair
-      callback(null, {
-        expiration:    expiration,  // Unix epoch
-        accessToken:   (new Buffer([message, password].join(':'))).toString('base64'),
-        basicLogin:    (new Buffer(message)).toString('base64'),
-        basicPassword: password
-      });
-    }
-  });
-};
+var xiongxiong = require('xiongxiong')(privateKey, process.env.LIFETIME);
 
 // Shibboleth authentication attributes
 var shibboleth = (process.env['AUTH_TYPE'] == 'shibboleth'),
@@ -237,7 +209,7 @@ var shibboleth = (process.env['AUTH_TYPE'] == 'shibboleth'),
 if (process.env['REQUEST_METHOD'] == 'GET') {
   if (shibboleth && ePPN && sessionID) {
     // We're good to go :)
-    bearerToken(ePPN, sessionID, function(err, token) {
+    xiongxiong.create([ePPN, sessionID], function(err, token) {
       if (err) {
         httpWrite.error(500, err.message);
 
