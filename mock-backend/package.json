@@ -10,6 +10,7 @@
     "express": "*",
     "mongodb": "*",
     "morgan": "*",
-    "node-env-file": "*"
+    "node-env-file": "*",
+    "xiongxiong": "*"
   }
 }

@@ -20,6 +20,9 @@ nbproject
 Thumbs.db
 .idea
 
+# Private key
+hgi-web.key
+
 # NPM packages folder.
 node_modules/
 
