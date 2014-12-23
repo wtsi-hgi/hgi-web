@@ -7,29 +7,26 @@ var fs         = require('fs'),
     xiongxiong = require('xiongxiong')(privateKey);
 
 module.exports = function(req, res, next) {
-  var passed = false,
-      auth   = (req.headers.authorization || '').split(' '),
-      token;
+  var auth  = (req.headers.authorization || '').split(' '),
+      token = {isValid: false};
 
   switch (auth[0].toLowerCase()) {
     case 'bearer':
-      // Validate bearer token
-      token  = xiongxiong.extract(auth[1]);
-      passed = token.isValid || false;
+      // Decode bearer token
+      token = xiongxiong.extract(auth[1]);
       break;
 
     case 'basic':
-      // Validate basic auth pair
+      // Decode basic auth pair
       var basicPair = (new Buffer(auth[1], 'base64')).toString().split(':');
-      token  = xiongxiong.extract(basicPair[0], basicPair[1]);
-      passed = token.isValid || false;
+      token = xiongxiong.extract(basicPair[0], basicPair[1]);
       break;
 
     default:
       break;
   }
 
-  if (passed) {
+  if (token.isValid) {
     // We're good!
     // Thread extracted token data through all requests
     req.token = token;
