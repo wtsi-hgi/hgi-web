@@ -1,10 +1,10 @@
-# Human Genetics Informatics Web Application
+# HGI Web Application
 
 The full service stack for the management of HGI systems:
 
-* API token provider
-* API (backend) server
-* Client (frontend) server
+* [API token provider](token)
+* [API (backend) server](backend)
+* [Client (frontend) server](frontend)
 
 # License
 
@@ -23,7 +23,7 @@ General Public License](LICENSE) for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-*Note that the usage of a range of years within a copyright statement
+*Note that the use of a range of years within any copyright statement
 contained within this distribution should be interpreted as being
-equivalent to a list of years including the first and last year
+equivalent to a list of years, including the first and last year
 specified and all consecutive years between them.*
