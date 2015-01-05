@@ -30,13 +30,7 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
       morgan   = require('morgan');
 
   // Logging
-  app.use(morgan('dev'));
-  if (process.env.LOG_FILE) {
-    var fs        = require('fs'),
-        logStream = fs.createWriteStream(__dirname + '/' + process.env.LOG_FILE, {flags: 'a'});
-
-    app.use(morgan('combined', {stream: logStream}));
-  }
+  app.use(morgan('combined'));
 
   // Routing
   var routes  = require('./routes'),
