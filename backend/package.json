@@ -1,0 +1,16 @@
+{
+  "author": "Christopher Harrison",
+  "name": "hgi-web-mock-backend",
+  "version": "0.0.1",
+  "license": "AGPLv3",
+  "description": "Mock API server",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "express": "*",
+    "mongodb": "*",
+    "morgan": "*",
+    "node-env-file": "*",
+    "xiongxiong": "*"
+  }
+}
