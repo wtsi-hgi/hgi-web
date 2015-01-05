@@ -20,8 +20,11 @@ nbproject
 Thumbs.db
 .idea
 
+# Private key
+hgi-web.key
+
 # NPM packages folder.
 node_modules/
 
 # Generated assets don't need to be committed
-isomorphic-frontend/public/assets
+frontend/public/assets
