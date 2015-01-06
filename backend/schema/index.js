@@ -1,10 +1,11 @@
-// Create the API database (hgi-web-api) on a specified MongoDB server
+// Create the API database on a specified MongoDB server
 // Run as: mongo HOST[:PORT] index.js
 
 // AGPLv3
 // Copyright (c) 2015 Genome Research Limited
 
-var DB_NAME = 'hgi-web-api';
+// DB_NAME must be defined in db.conf
+var DB_NAME = cat('./db.conf').trim();
 
 var conn = new Mongo(),
     db   = conn.getDB(DB_NAME);
@@ -28,6 +29,7 @@ var schema = (function() {
     if (!f.isDirectory && isJSONExt.test(f.name)) {
       var basename = f.name.replace(getBasename, '$1');
       collections[basename] = JSON.parse(cat(f.name));
+      collections[basename]['_id'] = "_template";
     }
   });
 
@@ -35,9 +37,7 @@ var schema = (function() {
 })();
 
 var available      = db.getCollectionNames(),
-
-    exists         = {"$exists": true},
-    templateSchema = {version: exists, template: exists};
+    templateSchema = {'_id': '_template'};
 
 // Create or update the collections
 Object.keys(schema).forEach(function(c) {
