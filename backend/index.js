@@ -30,7 +30,7 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
       morgan   = require('morgan');
 
   // Logging
-  app.use(morgan('combined'));
+  app.use(morgan(process.stdout.isTTY ? 'dev' : 'combined'));
 
   // Routing
   var routes  = require('./routes'),
