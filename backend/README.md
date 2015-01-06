@@ -13,3 +13,6 @@ variables:
 * `PORT` Port for the API server to listen on
 * `KEYFILE` The private key used to authenticate the token
 * `DB_SOURCE` The main API MongoDB database URL
+
+The MongoDB database "schema" can be generated using the scripts found
+in [`schema/`](schema/).
