@@ -1,0 +1,7 @@
+{
+  "version":  1,
+  "template": [
+    {"name": "name", "type": "string"},
+    {"name": "url",  "type": "string"}
+  ]
+}
