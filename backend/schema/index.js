@@ -1,5 +1,5 @@
 // Create the API database on a specified MongoDB server
-// Run as: mongo HOST[:PORT] index.js
+// Run as: mongo [HOST[:PORT]] index.js
 
 // AGPLv3
 // Copyright (c) 2015 Genome Research Limited
@@ -21,15 +21,15 @@ var conn = new Mongo(),
 
 // Gather collection schemata from filesystem
 var schema = (function() {
-  var collections = {},
-      isJSONExt   = /\.json$/,
-      getBasename = /^\.\/(\w+)\.json$/;
+  var collections   = {},
+      parseFilename = /^(?:\.\/)?(\w+)\.json$/,
+      parts;
 
   listFiles().forEach(function(f) {
-    if (!f.isDirectory && isJSONExt.test(f.name)) {
-      var basename = f.name.replace(getBasename, '$1');
-      collections[basename] = JSON.parse(cat(f.name));
-      collections[basename]['_id'] = "_template";
+    if (!f.isDirectory && (parts = parseFilename.exec(f.name))) {
+      // parts[1] will be the basename with the extension stripped
+      collections[parts[1]] = JSON.parse(cat(f.name));
+      collections[parts[1]]['_id'] = "_template";
     }
   });
 
