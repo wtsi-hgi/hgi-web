@@ -1,0 +1,21 @@
+//- Setup navbar links
+//- This could probably be done better; it only, for example, allows
+//- normal links (no menus, etc.). That said, a full Backbone model and
+//- collection, however, would be a bit overkill when there's no
+//- meaningful RESTful interaction.
+
+//- AGPLv3 or later
+//- Copyright (c) 2014 Genome Research Limited
+
+- var links = [];
+- links.push({name: 'Home',     id: 'home',     href: ''      });
+- links.push({name: 'Projects', id: 'projects', href: 'projects'  });
+- links.push({name: 'About',    id: 'about',    href: 'about'  });
+- links.push({name: 'Contact',  id: 'contact',  href: 'contact'});
+
+each link in links
+  li(
+    class   = ['nav-link', link.name == active ? 'active' : undefined],
+    data-id = link.id
+  )
+    a(href = sd.BASE_PATH + link.href)= link.name

@@ -1,0 +1,18 @@
+//- AGPLv3 or later
+//- Copyright (c) 2014 Genome Research Limited
+
+mixin navbar(active)
+  .navbar.navbar-inverse.navbar-fixed-top(role='navigation')
+    .container
+      .navbar-header
+        button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        img.navbar-brand(src = sd.BASE_PATH + 'images/hgi.svg')
+      .navbar-collapse.collapse
+        ul.nav.navbar-nav
+          include links
+        p#auth-user.navbar-text.navbar-right.
+          todo@sanger.ac.uk

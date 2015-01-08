@@ -1,0 +1,9 @@
+{
+  "version":  1,
+  "template": [
+    {"name": "seq",  "type": "number"},
+    {"name": "id",   "type": "string"},
+    {"name": "name", "type": "string"},
+    {"name": "href", "type": "string"}
+  ]
+}

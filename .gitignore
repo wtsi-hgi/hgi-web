@@ -26,11 +26,5 @@ hgi-web.key
 # NPM packages folder.
 node_modules/
 
-# public folder
-public/
-
-# Brunch folder for temporary files.
-tmp/
-
-# Files that need to be configured by installer
-node-frontend/app/settings.coffee
+# Generated assets don't need to be committed
+frontend/public/assets

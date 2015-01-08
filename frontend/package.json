@@ -1,0 +1,28 @@
+{
+  "author": "Christopher Harrison",
+  "name": "hgi-web-isomorphic-frontend",
+  "version": "0.0.1",
+  "license": "AGPLv3",
+  "private": true,
+  "scripts": {
+    "start": "make up"
+  },
+  "dependencies": {
+    "express": "*",
+    "compression": "*",
+    "jade": "*",
+    "sharify": "*",
+    "backbone": "*",
+    "backbone-super-sync": "*",
+    "node-env-file": "*",
+    "jquery": "*",
+    "bootstrap": "*"
+  },
+  "devDependencies": {
+    "browserify": "*",
+    "browserify-dev-middleware": "*",
+    "jadeify": "*",
+    "stylus": "*",
+    "uglify-js": "*"
+  }
+}
