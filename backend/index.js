@@ -41,7 +41,8 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
 
   // Set up route handlers
   Object.keys(routes).forEach(function(route) {
-    var routeVerbs = Object.keys(routes[route]);
+    var routeVerbs   = Object.keys(routes[route]),
+        routeOptions = {'OPTIONS': null};
 
     // Catch all middleware for 401 and 405s
     app.all(route, security.authenticate, function(req, res, next) {
@@ -56,26 +57,6 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
       }
     });
 
-    // Set up OPTIONS handler
-    app.options(route, function(req, res) {
-      var allow = routeVerbs.join(',').toUpperCase() + ',OPTIONS';
-
-      res.set({
-        'Allow':        allow,
-        'Content-Type': 'application/json'
-      });
-
-      res.send((function() {
-        // Construct OPTIONS content
-        var options = {'OPTIONS': null};
-        routeVerbs.forEach(function(verb) {
-          options[verb.toUpperCase()] = routes[route][verb]['_options'] || null;
-        });
-
-        return options;
-      })());
-    });
-
     // Set defined request handlers
     routeVerbs.forEach(function(verb) {
       // Fail on unhandlable verb
@@ -85,11 +66,26 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
         throw new Error('I do not know how to \'' + verb.toUpperCase() + '\' ' + route)
       }
 
+      // Construct OPTIONS content
+      routeOptions[verb.toUpperCase()] = routes[route][verb]['_options'] || null;
+
       // Authorisation middleware follows same schema as routing, with the
       // exception that omitted route/verb combinations in the data
       // structure are vacuously authorised
       var authorise = security.authorise[route] && security.authorise[route][verb];
       app[verb](route, authorise || security.youreGood, routes[route][verb]);
+    });
+
+    // Set up OPTIONS handler
+    app.options(route, function(req, res) {
+      var allow = routeVerbs.join(',').toUpperCase() + ',OPTIONS';
+
+      res.set({
+        'Allow':        allow,
+        'Content-Type': 'application/json'
+      });
+
+      res.send(routeOptions);
     });
   });
 
