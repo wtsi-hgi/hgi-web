@@ -64,7 +64,16 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
         'Allow':        allow,
         'Content-Type': 'application/json'
       });
-      res.send(allow.split(','));
+
+      res.send((function() {
+        // Construct OPTIONS content
+        var options = {'OPTIONS': null};
+        routeVerbs.forEach(function(verb) {
+          options[verb.toUpperCase()] = routes[route][verb]['_options'] || null;
+        });
+
+        return options;
+      })());
     });
 
     // Set defined request handlers
