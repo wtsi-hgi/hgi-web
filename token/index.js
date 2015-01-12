@@ -76,7 +76,7 @@ var shibboleth = (process.env['AUTH_TYPE'] == 'shibboleth'),
 if (process.env['REQUEST_METHOD'] == 'GET') {
   if (shibboleth && ePPN && sessionID) {
     // We're good to go :)
-    xiongxiong.create([ePPN, sessionID], function(err, token) {
+    xiongxiong.encode([ePPN, sessionID], function(err, token) {
       if (err) {
         httpWrite.error(500, err.message);
 

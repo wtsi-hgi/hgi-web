@@ -13,13 +13,13 @@ module.exports = function(req, res, next) {
   switch (auth[0].toLowerCase()) {
     case 'bearer':
       // Decode bearer token
-      token = xiongxiong.extract(auth[1]);
+      token = xiongxiong.decode(auth[1]);
       break;
 
     case 'basic':
       // Decode basic auth pair
       var basicPair = (new Buffer(auth[1], 'base64')).toString().split(':');
-      token = xiongxiong.extract(basicPair[0], basicPair[1]);
+      token = xiongxiong.decode(basicPair[0], basicPair[1]);
       break;
 
     default:
@@ -28,7 +28,7 @@ module.exports = function(req, res, next) {
 
   if (token && token.isValid()) {
     // We're good!
-    // Thread extracted token data through all requests
+    // Thread decoded token data through all requests
     req.token = token;
     next();
 

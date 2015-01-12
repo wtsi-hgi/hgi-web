@@ -281,7 +281,7 @@ module.exports = {
                     });
 
                   } else {
-                    // Get the whole collection
+                    // Get the whole collection (sans template document)
                     collection.find({'_id': {'$ne': '_template'}}).toArray(function(err, data) {
                       // TODO Hypermedia content
                       res.type('json');
