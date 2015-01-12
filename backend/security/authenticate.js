@@ -7,8 +7,8 @@ var fs         = require('fs'),
     xiongxiong = require('xiongxiong')(privateKey);
 
 module.exports = function(req, res, next) {
-  var auth  = (req.headers.authorization || '').split(' '),
-      token = {isValid: false};
+  var auth = (req.headers.authorization || '').split(' '),
+      token;
 
   switch (auth[0].toLowerCase()) {
     case 'bearer':
@@ -26,7 +26,7 @@ module.exports = function(req, res, next) {
       break;
   }
 
-  if (token.isValid) {
+  if (token && token.isValid()) {
     // We're good!
     // Thread extracted token data through all requests
     req.token = token;
