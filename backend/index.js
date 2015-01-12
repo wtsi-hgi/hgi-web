@@ -60,8 +60,11 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
     app.options(route, function(req, res) {
       var allow = routeVerbs.join(',').toUpperCase() + ',OPTIONS';
 
-      res.set('Allow', allow);
-      res.send();
+      res.set({
+        'Allow':        allow,
+        'Content-Type': 'application/json'
+      });
+      res.send(allow.split(','));
     });
 
     // Set defined request handlers
