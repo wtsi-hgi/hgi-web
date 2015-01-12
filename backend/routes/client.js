@@ -282,7 +282,7 @@ module.exports = {
 
                   } else {
                     // Get the whole collection
-                    collection.find().toArray(function(err, data) {
+                    collection.find({'_id': {'$ne': '_template'}}).toArray(function(err, data) {
                       // TODO Hypermedia content
                       res.type('json');
                       res.send(data);
