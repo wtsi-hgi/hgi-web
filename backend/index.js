@@ -42,6 +42,7 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
   // Set up route handlers
   Object.keys(routes).forEach(function(route) {
     var routeVerbs   = Object.keys(routes[route]),
+        routeAllow   = routeVerbs.join(',').toUpperCase() + ',OPTIONS',
         routeOptions = {'OPTIONS': null};
 
     // Catch all middleware for 401 and 405s
@@ -53,6 +54,7 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
 
       } else {
         // Not cool
+        res.set('Allow', routeAllow);
         res.status(405).send('Method Not Allowed');
       }
     });
@@ -78,10 +80,9 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
 
     // Set up OPTIONS handler
     app.options(route, function(req, res) {
-      var allow = routeVerbs.join(',').toUpperCase() + ',OPTIONS';
-
       res.set({
-        'Allow':        allow,
+        'Allow':        routeAllow,
+        'Link':         '<' + process.env.OPTIONS_PROFILE + '>;rel="profile"',
         'Content-Type': 'application/json'
       });
 
