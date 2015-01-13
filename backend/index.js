@@ -61,7 +61,7 @@ mongo.connect(process.env.DB_SOURCE, function(err, db) {
     routeVerbs.forEach(function(verb) {
       // Fail on unhandlable verb
       // n.b., We explicitly disallow OPTIONS, because we sort that out
-      // ourselves automagically (i.e., see above)
+      // ourselves automagically (i.e., see below)
       if (allowed.indexOf(verb) == -1) {
         throw new Error('I do not know how to \'' + verb.toUpperCase() + '\' ' + route)
       }
