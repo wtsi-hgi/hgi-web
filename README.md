@@ -3,6 +3,7 @@
 The full service stack for the management of HGI systems:
 
 * [API token provider](token)
+* [Core service APIs](core)
 * [API (backend) server](backend)
 * [Client (frontend) server](frontend)
 

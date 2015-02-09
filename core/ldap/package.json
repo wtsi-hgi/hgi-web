@@ -1,0 +1,14 @@
+{
+  "name": "hgi-web-core-ldap",
+  "version": "0.0.1",
+  "description": "Directory Enquiries",
+  "main": "index.js",
+  "author": "Christopher Harrison",
+  "license": "AGPLv3",
+  "private": true,
+  "dependencies": {
+    "express": "*",
+    "ldapjs": "*",
+    "node-env-file": "*"
+  }
+}
