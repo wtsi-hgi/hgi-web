@@ -11,8 +11,8 @@ var bunyan = require('bunyan'),
     logger = bunyan.createLogger({
       name:    'hgi-web-core-ldap',
       streams: [
-        { stream: process.stderr,            level: 'info' },
-        { path:   env.LOGFILE || 'ldap.log', level: 'trace' }
+        { level: 'info',  stream: process.stderr },
+        { level: 'trace', path:   env.LOGFILE || 'ldap.log' }
       ]
     });
 
@@ -36,17 +36,13 @@ var ldap = (function(url, poolSize) {
 var express = require('express'),
     app     = express();
 
-var middleware = {
-  bunyan: require('bunyan-middleware')
-};
-
-app.use(middleware.bunyan({
+app.use(require('bunyan-middleware')({
   logger:         logger,
   obscureHeaders: ['Authorization']
 }));
 
 // API routing
-// TODO
+require('./route.js')(app, ldap);
 
 // Let's go!
 app.listen(env.PORT, function() {
@@ -54,12 +50,3 @@ app.listen(env.PORT, function() {
     port: env.PORT
   }, 'Service started');
 });
-// ldap.search(env.BASEDN, {
-//   filter:     '(uid=ch12)',
-//   attributes: ['cn', 'mail'],
-//   scope:      'sub'
-// }, function(err, ldapRes) {
-//   ldapRes.on('searchEntry', function(entry) {
-//     console.log(entry.object.cn, entry.object.mail);
-//   });
-// });
