@@ -18,16 +18,15 @@ module.exports = function(app, ldap) {
 
     } else {
       var options = {
-        scope:      'sub',
-        attributes: attr || allowed
+        filter:     '(sangerActiveAccount=TRUE)',
+        attributes: attr || allowed,
+        scope:      'sub'
       };
 
       if (uid) {
-        options.filter = '(&(sangerActiveAccount=TRUE)(|'
+        options.filter = '(&' + options.filter + '(|'
                        + '(uid=' + uid + ')'
                        + '(mail=' + uid + ')))';
-      } else {
-        options.filter = '(sangerActiveAccount=TRUE)';
       }
 
       ldap.search(env.BASEDN, options, function(err, dres) {
