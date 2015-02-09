@@ -8,6 +8,7 @@ authorisation purposes.
 
 The following environment variables should be set for the service:
 
+* `LOGFILE` Bunyan log file (defaults to `ldap.log`)
 * `LDAPHOST` The LDAP server URL (i.e., `ldap://host:port`)
 * `POOLSIZE` The maximum number of connections (defaults to 5)
 * `BASEDN` The base distinguished name in the directory (per

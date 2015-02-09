@@ -8,6 +8,7 @@
   "private": true,
   "dependencies": {
     "bunyan": "*",
+    "bunyan-middleware": "^0.1.0",
     "express": "*",
     "ldapjs": "*",
     "node-env-file": "*"
