@@ -9,6 +9,7 @@ authorisation purposes.
 The following environment variables should be set for the service:
 
 * `LDAPHOST` The LDAP server URL (i.e., `ldap://host:port`)
+* `POOLSIZE` The maximum number of connections (defaults to 5)
 * `BASEDN` The base distinguished name in the directory (per
   [RFC2253](https://www.ietf.org/rfc/rfc2253.txt))
 * `PORT` The port on which the client service will listen
