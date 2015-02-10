@@ -1,3 +1,6 @@
+// AGPLv3 or later
+// Copyright (c) 2015 Genome Research Limited
+
 var env = process.env;
 
 module.exports = function(app, ldap) {

@@ -1,0 +1,6 @@
+{
+  "/groups":     "ou=group,dc=sanger,dc=ac,dc=uk",
+  "/groups/:id": "cn=:id,ou=group,dc=sanger,dc=ac,dc=uk",
+  "/people":     "ou=people,dc=sanger,dc=ac,dc=uk",
+  "/people/:id": "uid=:id,ou=people,dc=sanger,dc=ac,dc=uk"
+}
