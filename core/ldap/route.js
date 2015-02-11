@@ -104,6 +104,7 @@ module.exports = function(app, ldap) {
         if (err) {
           // TODO
           res.write(err.message); 
+          res.end();
 
         } else {
           ldapRes.on('searchEntry', function(entry) {
@@ -121,6 +122,7 @@ module.exports = function(app, ldap) {
 
             // TODO
             res.write(err.message); 
+            res.end();
           });
         }
       });
