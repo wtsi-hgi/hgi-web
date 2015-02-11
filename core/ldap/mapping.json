@@ -1,6 +1,21 @@
 {
-  "/groups":     "ou=group,dc=sanger,dc=ac,dc=uk",
-  "/groups/:id": "cn=:id,ou=group,dc=sanger,dc=ac,dc=uk",
-  "/people":     "ou=people,dc=sanger,dc=ac,dc=uk",
-  "/people/:id": "uid=:id,ou=people,dc=sanger,dc=ac,dc=uk"
+  "/groups": {
+    "dn":    "ou=group,dc=sanger,dc=ac,dc=uk",
+    "scope": "one"
+  },
+
+  "/groups/:id": {
+    "dn":    "cn=:id,ou=group,dc=sanger,dc=ac,dc=uk",
+    "scope": "base"
+  },
+
+  "/people": {
+    "dn":    "ou=people,dc=sanger,dc=ac,dc=uk",
+    "scope": "one"
+  },
+
+  "/people/:id": {
+    "dn":    "uid=:id,ou=people,dc=sanger,dc=ac,dc=uk",
+    "scope": "base"
+  }
 }

@@ -1,9 +1,13 @@
 // AGPLv3 or later
 // Copyright (c) 2015 Genome Research Limited
 
+// Specific ldapjs imports
+var parseFilter = require('ldapjs').parseFilter;
+
 module.exports = function(app, ldap) {
   var routeMap = (function(src) {
-    var mapping = require(src);
+    var mapping      = require(src),
+        allowedScope = ['base', 'sub', 'one', 'childern'];
 
     // Parameterised DN, using :bind variables
     var paramDN = function(dn) {
@@ -24,10 +28,14 @@ module.exports = function(app, ldap) {
       };
     }
 
-    // Parameterise each route map
+    // Parameterise each route map and normalise scope
     // n.b. mapping is just JSON, so we don't have to do hasOwnProperty
     for (route in mapping) {
-      mapping[route] = paramDN(mapping[route]);
+      mapping[route].dn = paramDN(mapping[route].dn);
+
+      if (allowedScope.indexOf(mapping[route].scope) == -1) {
+        mapping[route].scope = 'base';
+      }
     }
 
     return mapping;
@@ -92,12 +100,21 @@ module.exports = function(app, ldap) {
   // Set up routing
   for (route in routeMap) (function(r) {
     app.get(r, function(req, res, next) {
-      var dn      = routeMap[r](req.params),
-          options = { scope: 'sub', attrsOnly: true}
+      var dn      = routeMap[r].dn(req.params),
+          options = { scope: routeMap[r].scope }
 
       // Parse query string for specific attributes
       if (req.query.attrs) {
         options.attributes = req.query.attrs.split(',');
+      }
+
+      // Parse query string for filter
+      try {
+        options.filter = parseFilter(req.query.q);
+      }
+      catch(e) {
+        // TODO
+        // Handle invalid filter
       }
 
       ldap.search(dn, options, function(err, ldapRes) {

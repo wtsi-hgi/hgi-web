@@ -27,16 +27,7 @@ var ldap = (function(clientOptions) {
   }, 'Starting LDAP client');
 
   clientOptions.log = logger;
-  var client = ldap.createClient(clientOptions);
-
-  // Export relevant LDAP errors with client
-  // This is a bit messy :P
-  client.error = {};
-  ['LDAPError', 'NoSuchObjectError'].forEach(function(e) {
-    client.error[e] = ldap[e];
-  });
-
-  return client;
+  return client = ldap.createClient(clientOptions);
 
 })({
   url:             env.LDAPHOST, 
