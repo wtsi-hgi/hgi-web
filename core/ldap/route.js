@@ -1,83 +1,138 @@
 // AGPLv3 or later
 // Copyright (c) 2015 Genome Research Limited
 
-var env = process.env;
-
 module.exports = function(app, ldap) {
-  var allowed = ( 'uid,cn,sn,givenName,mail,telephoneNumber,'
-                + 'gidNumber,departmentNumber,sangerTeamName,'
-                + 'roomNumber').split(',');
+  var routeMap = (function(src) {
+    var mapping = require(src);
 
-  // TODO What to do at root? Returning all matches is not realistic
-  // app.get('/', WHAT?);
+    // Parameterised DN, using :bind variables
+    var paramDN = function(dn) {
+      return function(params) {
+        var output = dn;
 
-  app.get('/:uid/:attr?', function(req, res) {
-    var uid  = req.params.uid,
-        attr = req.params.attr;
+        // Bind all parameter values
+        if (params) {
+          for (param in params) {
+            if (params.hasOwnProperty(param)) {
+              var reParam = new RegExp(':' + param + '(?=\\W)', 'g');
+              output = output.replace(reParam, params[param]);
+            }
+          }
+        }
 
-    // Can only access allowed attributes
-    if (attr && allowed.concat('jpegPhoto').indexOf(attr) == -1) {
-      res.status(404).send('Not found');
+        return output;
+      };
+    }
 
-    } else {
-      var options = {
-        filter:     '(sangerActiveAccount=TRUE)',
-        attributes: attr || allowed,
-        scope:      'sub'
+    // Parameterise each route map
+    // n.b. mapping is just JSON, so we don't have to do hasOwnProperty
+    for (route in mapping) {
+      mapping[route] = paramDN(mapping[route]);
+    }
+
+    return mapping;
+  })('./mapping.json');
+
+  // Attribute filter
+  // The ldapjs output always includes `dn` and `controls` members, the
+  // latter is useless for our purposes and so should be discarded. For
+  // binary data, we should base64 encode it; there's no easy way to
+  // determine this, so we cheat and check known binary attribute names.
+  var attrFilter = (function() {
+    var attrClass = (function() {
+      var classes = {
+        blacklist: ['controls'],
+        binary:    ['jpegPhoto', /;binary$/]
       };
 
-      if (uid) {
-        options.filter = '(&' + options.filter + '(|'
-                       + '(uid=' + uid + ')'
-                       + '(mail=' + uid + ')))';
+      // Convert any strings (above) into regular expressions
+      for (filter in classes) {
+        classes[filter] = classes[filter].map(function(t) {
+          if (typeof t == 'string') {
+            return new RegExp('^' + t + '$');
+          } else {
+            return t;
+          }
+        });
+      };
+
+      return function(key) {
+        for (filter in classes) {
+          if (classes[filter].some(function(t) { return t.test(key); })) {
+            return filter;
+          }
+        }
+      };
+    })();
+    
+    return function(entry) {
+      var attrs  = Object.keys(entry.object),
+          output = {};
+
+      attrs.forEach(function(key) {
+        switch (attrClass(key)) {
+          case 'blacklist':
+            // Do nothing
+            break;
+
+          case 'binary':
+            output[key] = entry.raw[key].toString('base64');
+            break;
+
+          default:
+            output[key] = entry.object[key];
+            break;
+        }
+      });
+
+      return output;
+    };
+  })();
+
+  // Set up routing
+  for (route in routeMap) (function(r) {
+    app.get(r, function(req, res, next) {
+      var dn      = routeMap[r](req.params),
+          options = { scope: 'sub', attrsOnly: true}
+
+      // Parse query string for specific attributes
+      if (req.query.attrs) {
+        options.attributes = req.query.attrs.split(',');
       }
 
-      ldap.search(env.BASEDN, options, function(err, dres) {
+      ldap.search(dn, options, function(err, ldapRes) {
         if (err) {
-          req.log.error(err);
-          res.status(500).send(err.message);
-        
+          // TODO
+          res.write(err.message); 
+
         } else {
-          var toWrite;
-
-          dres.on('searchEntry', function(entry) {
-            if (attr) {
-              // Special handler for photos
-              if (attr == 'jpegPhoto') {
-                res.set('Content-Type', 'image/jpeg');
-                toWrite = entry.raw.jpegPhoto;
-
-              // All other attributes
-              } else {
-                var output = {};
-                output[attr] = entry.object[attr];
-                toWrite = output;
-              }
-
-            // All attributes
-            } else {
-              var output = {};
-              allowed.forEach(function(a) { // FIXME Blocking
-                output[a] = entry.object[a];
-              });
-              toWrite = output;
-            }
+          ldapRes.on('searchEntry', function(entry) {
+            res.write(JSON.stringify(attrFilter(entry), null, 2));
           });
 
-          dres.on('error', function(err) {
-            req.log.error(err);
-            res.status(500).send(err.message);
+          ldapRes.on('end', function(result) {
+            res.end();
           });
 
-          dres.on('end', function(result) {
-            if (!res.headersSent) {
-              res.send(toWrite);
+          ldapRes.on('error', function(err) {
+            if (err instanceof ldap.error.NoSuchObjectError) {
+              // TODO 404 Handler
             }
+
+            // TODO
+            res.write(err.message); 
           });
         }
       });
-    }
-  });
+
+      // TODO Chunked encoding
+      // app.set({
+      //   'Content-Type':      'application/json',
+      //   'Transfer-Encoding': 'chunked'
+      // });
+
+    });
+  })(route);
 
   // Catch all for anything else
   app.get('*', function(req, res) {

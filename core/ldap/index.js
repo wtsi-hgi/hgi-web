@@ -17,20 +17,33 @@ var bunyan = require('bunyan'),
     });
 
 // Create LDAP client connection pool
-var ldap = (function(url, poolSize) {
+var ldap = (function(clientOptions) {
   var ldap = require('ldapjs');
-  
+
+  // We don't want to log the bind credentials
   logger.info({
-    url:      url,
-    poolSize: poolSize
+    host: clientOptions.url,
+    pool: clientOptions.maxConnections
   }, 'Starting LDAP client');
 
-  return ldap.createClient({
-    url:            url,
-    maxConnections: poolSize,
-    log:            logger
+  clientOptions.log = logger;
+  var client = ldap.createClient(clientOptions);
+
+  // Export relevant LDAP errors with client
+  // This is a bit messy :P
+  client.error = {};
+  ['LDAPError', 'NoSuchObjectError'].forEach(function(e) {
+    client.error[e] = ldap[e];
   });
-})(env.LDAPHOST, parseInt(env.POOLSIZE || 5, 10));
+
+  return client;
+
+})({
+  url:             env.LDAPHOST, 
+  bindDN:          env.BINDDN,
+  bindCredentials: env.BINDPWD,
+  maxConnections:  parseInt(env.POOLSIZE, 10) || 10
+});
 
 // Setup HTTP server
 var express = require('express'),
@@ -43,6 +56,12 @@ app.use(require('bunyan-middleware')({
 
 // API routing
 require('./route.js')(app, ldap);
+
+// TODO Error handling
+// app.use(function(err, req, res, next) {
+//   req.log.error(err);
+//   res.status(500).send(err.message);
+// });
 
 // Let's go!
 app.listen(env.PORT, function() {
