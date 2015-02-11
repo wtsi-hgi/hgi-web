@@ -1,4 +1,8 @@
 {
+  "/": {
+    "dn":    "dc=sanger,dc=ac,dc=uk"
+  },
+
   "/groups": {
     "dn":    "ou=group,dc=sanger,dc=ac,dc=uk",
     "scope": "one",
