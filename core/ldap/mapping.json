@@ -1,21 +1,32 @@
 {
   "/groups": {
     "dn":    "ou=group,dc=sanger,dc=ac,dc=uk",
-    "scope": "one"
+    "scope": "one",
+    "attrs": ["cn", "member"]
   },
 
   "/groups/:id": {
-    "dn":    "cn=:id,ou=group,dc=sanger,dc=ac,dc=uk",
-    "scope": "base"
+    "dn":    "cn=:id,ou=group,dc=sanger,dc=ac,dc=uk"
   },
 
   "/people": {
     "dn":    "ou=people,dc=sanger,dc=ac,dc=uk",
-    "scope": "one"
+    "scope": "one",
+    "attrs": ["uid", "cn", "mail"]
   },
 
   "/people/:id": {
-    "dn":    "uid=:id,ou=people,dc=sanger,dc=ac,dc=uk",
-    "scope": "base"
+    "dn":    "uid=:id,ou=people,dc=sanger,dc=ac,dc=uk"
+  },
+
+  "/teams": {
+    "dn":    "ou=teams,dc=sanger,dc=ac,dc=uk",
+    "scope": "one",
+    "attrs": ["departmentNumber", "cn"]
+  },
+
+  "/teams/:n": {
+    "dn":    "departmentNumber=:n,ou=teams,dc=sanger,dc=ac,dc=uk",
+    "attrs": ["departmentNumber", "cn"]
   }
 }

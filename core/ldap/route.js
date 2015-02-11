@@ -101,11 +101,18 @@ module.exports = function(app, ldap) {
   for (route in routeMap) (function(r) {
     app.get(r, function(req, res, next) {
       var dn      = routeMap[r].dn(req.params),
-          options = { scope: routeMap[r].scope }
+          options = {
+            scope:      routeMap[r].scope,
+            attributes: routeMap[r].attrs
+          }
 
       // Parse query string for specific attributes
       if (req.query.attrs) {
-        options.attributes = req.query.attrs.split(',');
+        if (req.query.attrs == '*') {
+          options.attributes = undefined;
+        } else {
+          options.attributes = req.query.attrs.split(',');
+        }
       }
 
       // Parse query string for filter
