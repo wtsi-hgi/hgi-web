@@ -2,7 +2,9 @@
 // Copyright (c) 2015 Genome Research Limited
 
 // Specific ldapjs imports
-var parseFilter = require('ldapjs').parseFilter;
+var parseFilter       = require('ldapjs').parseFilter,
+    LDAPError         = require('ldapjs').LDAPError,
+    NoSuchObjectError = require('ldapjs').NoSuchObjectError;
 
 // Load and transform the route map
 var routeMap = (function(src) {
@@ -117,52 +119,102 @@ module.exports = function(app, ldap) {
       }
 
       // Parse query string for filter
-      try {
-        options.filter = parseFilter(req.query.q);
+      if (req.query.q) {
+        try {
+          options.filter = parseFilter(req.query.q);
+        }
+        catch(err) {
+          // Handle invalid filter
+          next({
+            status:    400,
+            message:   'Invalid filter',
+            exception: err
+          });
+
+          return;
+        }
       }
-      catch(e) {
-        // TODO
-        // Handle invalid filter
-      }
+
+      // Flow control flags for async LDAP
+      var found       = false,
+          chunk       = routeMap[r].scope != 'base',
+          sendHeaders = function() {
+            app.set('Content-Type', 'application/json');
+            if (chunk) { app.set('Transfer-Encoding', 'chunked'); }
+          };
 
       ldap.search(dn, options, function(err, ldapRes) {
         if (err) {
-          // TODO
-          res.write(err.message); 
-          res.end();
-
-        } else {
-          ldapRes.on('searchEntry', function(entry) {
-            res.write(JSON.stringify(attrFilter(entry), null, 2));
+          // Some horrible LDAP error... oh the humanity!
+          next({
+            status:    500,
+            message:   err.message,
+            exception: err
           });
 
-          ldapRes.on('end', function(result) {
-            res.end();
-          });
-
-          ldapRes.on('error', function(err) {
-            if (err instanceof ldap.error.NoSuchObjectError) {
-              // TODO 404 Handler
-            }
-
-            // TODO
-            res.write(err.message); 
-            res.end();
-          });
+          return;
         }
+
+        ldapRes.on('searchEntry', function(entry) {
+          if (!found) {
+            sendHeaders();
+
+            // Write JSON open array
+            if (chunk) { res.write('['); }
+          }
+
+          // Write JSON array element separator
+          if (found && chunk) { res.write(','); }
+
+          // Write JSON object
+          res.write(JSON.stringify(attrFilter(entry)));
+
+          found = true;
+        });
+
+        ldapRes.on('end', function(result) {
+          // Write JSON close array
+          if (found && chunk) { res.write(']'); }
+          res.end();
+        });
+
+        ldapRes.on('error', function(err) {
+          if (err instanceof NoSuchObjectError) {
+            next({
+              status:    404,
+              message:   'No such object in LDAP directory',
+              exception: err
+            });
+
+          } else {
+
+            var message = err.toString();
+
+            // Append error object to output, if data has already been
+            // transmitted. Otherwise, fallback to general error handler
+            if (res.headersSent) {
+              if (found && chunk) { res.write(','); }
+              res.write(JSON.stringify({ error: message }));
+              if (found && chunk) { res.write(']'); }
+              res.end();
+            } else {
+              next({
+                status:    500,
+                message:   message,
+                exception: err
+              });
+            }
+          }
+        });
       });
-
-      // TODO Chunked encoding
-      // app.set({
-      //   'Content-Type':      'application/json',
-      //   'Transfer-Encoding': 'chunked'
-      // });
-
     });
   })(route);
 
   // Catch all for anything else
-  app.get('*', function(req, res) {
-    res.status(404).send('Not found');
+  app.get('*', function(req, res, next) {
+    next({
+      status:   404,
+      message: 'No such route'
+    });
   });
 };

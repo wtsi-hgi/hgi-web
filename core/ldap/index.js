@@ -48,11 +48,18 @@ app.use(require('bunyan-middleware')({
 // API routing
 require('./route.js')(app, ldap);
 
-// TODO Error handling
-// app.use(function(err, req, res, next) {
-//   req.log.error(err);
-//   res.status(500).send(err.message);
-// });
+// Error handling
+app.use(function(err, req, res, next) {
+  if (err.exception) {
+    req.log.error(err.exception);
+  }
+
+  res.set('Content-Type', 'application/json');
+  res.status(err.status).send({
+    status: err.status,
+    error:  err.message
+  });
+});
 
 // Let's go!
 app.listen(env.PORT, function() {

@@ -52,6 +52,13 @@ When a DN has multiple attributes of the same name, this will be
 converted into a JSON array. When an attribute is identified as usually
 containing binary data, its data will be base64 encoded.
 
+Note that if a non-base scope is specified, then chunked transfer
+encoding is used to transmit the data to the client. If an error occurs
+during the transfer (e.g., LDAP request timeout), then a special JSON
+object will be appended to the end of the output array and the HTTP
+connection closed. Said object will have a single key (`error`), which
+will describe the problem.
+
 (&#10034;) One could encode the DN components into the URL route, to
 preserve that information for a direct mapping, but who wants to type
 (or have to remember) something like:
