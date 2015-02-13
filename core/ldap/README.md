@@ -41,9 +41,10 @@ but:
   requested.
 * One isn't necessarily interested in all branches of the LDAP tree;
   moreover, the required scope of the branches you *are* interested in
-  may be different. For example, you wouldn't want an HTTP request to do
-  a full subtree search from the root. There lies the path to madness.
-* Flexibility and, to an extent, normalisation for the URL format. For
+  may be different. For example, you probably wouldn't want an HTTP
+  request to do a full subtree search from the root. There lies the path
+  to madness.
+* Flexibility and, to an extent, normalisation to the URL format. For
   example, `ou=Research & Development,ou=Provincial Branch,o=CompuGlobalHyperMegaNet,dc=cghm,dc=net`
   could be routed to `/nerds`, if that's more appropriate.
 
@@ -53,7 +54,7 @@ containing binary data, its data will be base64 encoded.
 
 (&#10034;) One could encode the DN components into the URL route, to
 preserve that information for a direct mapping, but who wants to type
-(or have to remember):
+(or have to remember) something like:
 
     http://ldap.gateway/ou-departments/dept-hr/cn-staff/uid-jbloggs
 
