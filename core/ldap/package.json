@@ -1,6 +1,6 @@
 {
   "name": "hgi-web-core-ldap",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Directory Enquiries",
   "main": "index.js",
   "author": "Christopher Harrison",
@@ -8,7 +8,7 @@
   "private": true,
   "dependencies": {
     "bunyan": "*",
-    "bunyan-middleware": "^0.1.0",
+    "bunyan-middleware": "*",
     "express": "*",
     "ldapjs": "*",
     "node-env-file": "*"

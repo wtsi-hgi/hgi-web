@@ -7,14 +7,24 @@ require('node-env-file')(__dirname + '/.env');
 var env = process.env;
 
 // Logging
-var bunyan = require('bunyan'),
-    logger = bunyan.createLogger({
-      name:    'hgi-web-core-ldap',
-      streams: [
-        { level: 'info',  stream: process.stderr },
-        { level: 'trace', path:   env.LOGFILE || 'ldap.log' }
-      ]
+var logger = (function() {
+  var bunyan = require('bunyan'),
+      setup  = {
+        name: 'hgi-web-core-ldap',
+        streams: [{ level: 'info', stream: process.stderr }]
+      };
+
+  // Add a trace log, if required
+  if (env.LOGFILE) {
+    setup.streams.push({
+      level: 'trace',
+      path:  env.LOGFILE
     });
+  }
+
+  return bunyan.createLogger(setup);
+
+})();
 
 // Create LDAP client connection pool
 var ldap = (function(clientOptions) {

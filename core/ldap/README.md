@@ -41,9 +41,9 @@ but:
   requested.
 * One isn't necessarily interested in all branches of the LDAP tree;
   moreover, the required scope of the branches you *are* interested in
-  may be different. For example, you probably wouldn't want an HTTP
-  request to do a full subtree search from the root. There lies the path
-  to madness.
+  may differ. For example, you probably wouldn't want an HTTP request to
+  do a full subtree search from the root. Therein lies the path to
+  madness.
 * Flexibility and, to an extent, normalisation to the URL format. For
   example, `ou=Research & Development,ou=Provincial Branch,o=CompuGlobalHyperMegaNet,dc=cghm,dc=net`
   could be routed to `/nerds`, if that's more appropriate.
@@ -93,7 +93,9 @@ encoded as `%26`. For example:
 
 The following environment variables are consumed by the service:
 
-* `LOGFILE` Bunyan log file (defaults to `ldap.log`)
+* `LOGFILE` Keep a trace log in this file (n.b., this file will get
+  *very* large, as all HTTP and LDAP communications will be logged; only
+  use this for debugging purposes)
 * `LDAPHOST` The LDAP server URL (i.e., `ldap://host:port`)
 * `BINDDN` The distinguished name all LDAP connections should be bound
   as (optional; per [RFC2253](http://www.ietf.org/rfc/rfc2253.txt))
