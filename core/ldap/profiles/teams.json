@@ -1,0 +1,8 @@
+{
+  "attributes": {
+    "departmentNumber": "Department identifier",
+    "cn":               "Department name",
+    "description":      "Full description"
+  },
+  "links": []
+}

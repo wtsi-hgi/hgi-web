@@ -1,0 +1,12 @@
+{
+  "attributes": {
+    "o":                        "Organisation",
+    "telephoneNumber":          "Telephone number",
+    "facsimileTelephoneNumber": "Fax number"
+  },
+  "links": [
+    { "url": "/people", "rel": "collection" },
+    { "url": "/groups", "rel": "collection" },
+    { "url": "/teams",  "rel": "collection" },
+  ]
+}

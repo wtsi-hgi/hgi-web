@@ -1,0 +1,9 @@
+{
+  "attributes": {
+    "cn":        "Group identifier",
+    "memberUid": "Group members"
+  },
+  "links": [
+    { "url": "/people/:memberUid", "rel": "member" }
+  ]
+}

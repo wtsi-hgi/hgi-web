@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "uid":              "User ID",
+    "cn":               "Full name",
+    "mail":             "E-Mail address",
+    "jpegPhoto":        "Photo",
+    "title":            "Job title",
+    "departmentNumber": "Department"
+  },
+  "links": [
+    { "url": "/teams/:departmentNumber", "rel": "team" }
+  ]
+}
