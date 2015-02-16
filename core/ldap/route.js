@@ -103,6 +103,7 @@ module.exports = function(app, ldap) {
   for (route in routeMap) (function(r) {
     app.get(r, function(req, res, next) {
       var dn      = routeMap[r].dn(req.params),
+          profile = routeMap[r].profile,
           options = {
             scope:      routeMap[r].scope,
             attributes: routeMap[r].attrs
@@ -136,10 +137,21 @@ module.exports = function(app, ldap) {
 
       // Flow control flags for async LDAP
       var found       = false,
-          chunk       = routeMap[r].scope != 'base',
+          chunk       = options.scope != 'base',
           sendHeaders = function() {
-            app.set('Content-Type', 'application/json');
-            if (chunk) { app.set('Transfer-Encoding', 'chunked'); }
+            // Everything is JSON
+            // Everything is cool when you're part of a team
+            res.set('Content-Type', 'application/json');
+
+            // Linked profile, if available
+            if (profile) {
+              res.set('Link', '<' + profile + '>;rel=profile');
+            }
+            
+            // Chunked encoding only for non-base scope
+            if (chunk) {
+              res.set('Transfer-Encoding', 'chunked');
+            }
           };
 
       ldap.search(dn, options, function(err, ldapRes) {
