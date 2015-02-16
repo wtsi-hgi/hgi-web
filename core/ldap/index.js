@@ -53,6 +53,11 @@ app.use(require('bunyan-middleware')({
   obscureHeaders: ['Authorization']
 }));
 
+// Profile hosting (if required)
+if (env.PROFDIR) {
+  app.use(env.PROFROUTE || '/profiles', express.static(env.PROFDIR));
+}
+
 // API routing
 require('./route.js')(app, ldap);
 
