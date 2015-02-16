@@ -4,6 +4,12 @@ This service currently acts as a read-only LDAP client. While it may be
 accessed by end users, it is intended to be consumed by other services
 for their authorisation purposes.
 
+Note that this service is currently not RESTful in the sense of it
+providing a hypermedia interface (i.e., it doesn't). How this can be
+shoehorned in isn't immediately clear. A possibility could be to
+associate each routed DN with a profile document and, if appropriate,
+translate any recognised FQDNs (i.e., those which are routed) into URLs.
+
 ## Routing
 
 The mapping between LDAP FQDNs and URLs is defined in `mapping.json`,
@@ -44,9 +50,13 @@ but:
   may differ. For example, you probably wouldn't want an HTTP request to
   do a full subtree search from the root. Therein lies the path to
   madness.
-* Flexibility and, to an extent, normalisation to the URL format. For
+* Flexibility and, to an extent, normalisation to URL constraints. For
   example, `ou=Research & Development,ou=Provincial Branch,o=CompuGlobalHyperMegaNet,dc=cghm,dc=net`
   could be routed to `/nerds`, if that's more appropriate.
+* While the service doesn't yet expose a hypermedia interface, given the
+  arbitrariness of attributes against any given LDAP directory,
+  an explicit mapping will make it possible to provide a more specific
+  profile (schema description) at each route.
 
 When a DN has multiple attributes of the same name, this will be
 converted into a JSON array. When an attribute is identified as usually
