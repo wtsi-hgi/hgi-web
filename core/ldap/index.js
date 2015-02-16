@@ -23,7 +23,6 @@ var logger = (function() {
   }
 
   return bunyan.createLogger(setup);
-
 })();
 
 // Create LDAP client connection pool
@@ -38,7 +37,6 @@ var ldap = (function(clientOptions) {
 
   clientOptions.log = logger;
   return client = ldap.createClient(clientOptions);
-
 })({
   url:             env.LDAPHOST, 
   bindDN:          env.BINDDN,

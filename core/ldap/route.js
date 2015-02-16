@@ -3,7 +3,6 @@
 
 // Specific ldapjs imports
 var parseFilter       = require('ldapjs').parseFilter,
-    LDAPError         = require('ldapjs').LDAPError,
     NoSuchObjectError = require('ldapjs').NoSuchObjectError;
 
 // Load and transform the route map
