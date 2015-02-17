@@ -9,6 +9,7 @@
   "dependencies": {
     "bunyan": "*",
     "bunyan-middleware": "*",
+    "compression": "*",
     "express": "*",
     "ldapjs": "*",
     "node-env-file": "*"

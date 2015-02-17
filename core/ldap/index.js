@@ -53,6 +53,8 @@ app.use(require('bunyan-middleware')({
   obscureHeaders: ['Authorization']
 }));
 
+app.use(require('compression')());
+
 // Profile hosting (if required)
 if (env.PROFDIR) {
   app.use(env.PROFROUTE || '/profiles', express.static(env.PROFDIR));
