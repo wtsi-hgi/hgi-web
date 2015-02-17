@@ -4,5 +4,8 @@
     "cn":               "Department name",
     "description":      "Full description"
   },
-  "links": []
+  "links": [
+    { "href": "/teams",                   "rel": "collection" },
+    { "href": "/teams/:departmentNumber", "rel": "item" }
+  ]
 }

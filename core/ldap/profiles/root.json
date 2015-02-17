@@ -5,8 +5,9 @@
     "facsimileTelephoneNumber": "Fax number"
   },
   "links": [
-    { "url": "/people", "rel": "collection" },
-    { "url": "/groups", "rel": "collection" },
-    { "url": "/teams",  "rel": "collection" },
+    { "href": "/",       "rel": "self" },
+    { "href": "/people", "rel": "collection" },
+    { "href": "/groups", "rel": "collection" },
+    { "href": "/teams",  "rel": "collection" },
   ]
 }
