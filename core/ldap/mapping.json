@@ -7,7 +7,7 @@
   "/groups": {
     "dn":      "ou=group,dc=sanger,dc=ac,dc=uk",
     "scope":   "one",
-    "attrs":   ["cn", "member"],
+    "attrs":   ["cn"],
     "profile": "/profiles/groups"
   },
 

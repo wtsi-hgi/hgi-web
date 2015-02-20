@@ -5,11 +5,13 @@
 var parseFilter       = require('ldapjs').parseFilter,
     NoSuchObjectError = require('ldapjs').NoSuchObjectError;
 
+// Base URL for upstream
+var baseURL = process.env.RPBASE || '';
+
 // Load and transform the route map
 var routeMap = (function(src) {
   var mapping      = require(src),
-      allowedScope = ['base', 'sub', 'one', 'childern'],
-      baseURL      = process.env.RPBASE;
+      allowedScope = ['base', 'sub', 'one', 'childern'];
 
   // Parameterised DN, using :bind variables
   var paramDN = function(dn) {
@@ -20,7 +22,7 @@ var routeMap = (function(src) {
       if (params) {
         for (param in params) {
           if (params.hasOwnProperty(param)) {
-            var reParam = new RegExp(':' + param + '(?=\\W)', 'g');
+            var reParam = new RegExp(':' + param + '(?=\\b)', 'g');
             output = output.replace(reParam, params[param]);
           }
         }
@@ -46,6 +48,79 @@ var routeMap = (function(src) {
 
   return mapping;
 })('./mapping.json');
+
+// Transpose the route map so we can convert DNs to URLs
+// Once transposed, the bind variables in the DN are converted into
+// regexp capture groups and respectively referenced in the URL.
+var dnToURL = (function(r) {
+  var transpose = (function() {
+    var output = [];
+    
+    // Unique elements in array
+    var unique = function(arr) {
+      var seen = {}
+      return arr.filter(function(i) {
+        return seen.hasOwnProperty(i) ? false : (seen[i] = true);
+      });
+    };
+
+    for (route in r) {
+      // Get back the parameterised DN and the list of parameters
+      // Plus we want a copy of the route to play with
+      var dn       = r[route].dn(),
+          bindVars = unique(dn.match(/:\w+/g) || []),
+          url      = route.toString();
+
+      // Go through each parameter to create a replacement map
+      bindVars.forEach(function(v, i) {
+        var ri = i + 1,
+            re = new RegExp(v + '(?=\\b)', 'g');
+
+        // Replace first occurrence in DN with capture group
+        dn = dn.replace(v, '(.*)');
+
+        // Replace any additional occurrences in DN with backref
+        dn = dn.replace(re, '\\' + ri);
+
+        // Replace all occurrences in URL with reference
+        url = url.replace(re, '$' + ri);
+      });
+
+      output.push({
+        dn:  new RegExp('^' + dn + '$'),
+        url: baseURL + url
+      });
+    }
+
+    return output;
+  })();
+
+  return function convert(val, rel) {
+    if (Array.isArray(val)) {
+      // Iterate over arrays
+      return val.map(function(e) {
+        return convert(e, rel);
+      });
+
+    } else {
+      for (t in transpose) {
+        var transform = transpose[t];
+
+        // We've got a routed DN, so augment it with a hyperlink
+        if (transform.dn.test(val)) {
+          return {
+            dn:   val,
+            href: val.replace(transform.dn, transform.url),
+            rel:  rel
+          };
+        }
+      }
+
+      // Otherwise, just pass-through
+      return val;
+    }
+  };
+})(routeMap);
 
 // Attribute filter
 // The ldapjs output always includes `dn` and `controls` members, the
@@ -94,7 +169,8 @@ var attrFilter = (function() {
           break;
 
         default:
-          output[key] = entry.object[key];
+          output[key] = dnToURL(entry.object[key],
+                                key == 'dn' ? 'self' : key);
           break;
       }
     });

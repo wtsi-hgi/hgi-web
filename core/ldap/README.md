@@ -7,12 +7,11 @@ for their authorisation purposes.
 All data served by this service is plain JSON and, as such, cannot be
 inherently RESTful as it fails the HATEOAS constraint. However, profile
 linking is supported using the Link response header field, per
-[RFC5988](http://www.rfc-editor.org/rfc/rfc5988.txt). Again, profile
-documents can be arbitrary, so won't necessarily satisfy the hypermedia
-requirement, so it is up to the service's administrator to enforce this.
-
-*TODO* Translate recognised FQDNs (i.e., those which are routed) into
-respective URLs.
+[RFC5988](http://www.rfc-editor.org/rfc/rfc5988.txt), and routed FQDNs
+will be augmented with hyperlinks, insofar as is possible in JSON.
+(Note, again, profile documents can be arbitrary, so won't necessarily
+satisfy the hypermedia requirement, so it is up to the service's
+administrator to enforce this if true RESTfulness is important to them.)
 
 ## Routing
 
@@ -80,6 +79,53 @@ preserve that information for a direct mapping, but who wants to type
 (or have to remember) something like:
 
     http://ldap.gateway/ou-departments/dept-hr/cn-staff/uid-jbloggs
+
+### FQDN to URL Translation
+
+Any FQDN that shows up as an attribute value, which is routed, will
+automatically be augmented with its respective URL and a link relation
+equal to the attribute name (n.b., the `dn` attribute will get a `self`
+relation). Arrays of values will be iterated through in a way you'd
+expect.
+
+For example, per the mapping illustrated above, the following LDAP
+directory at `/route/foo`:
+
+```ldap
+dn: cn=foo,o=fqdn,dc=example,dc=com
+cn: foo
+givenName: Mr. Foo
+boss: cn=bar,o=fqdn,dc=example,dc=com
+boss: cn=quux,o=fqdn,dc=example,dc=com
+```
+
+...will be translated into:
+
+```json
+{
+  "dn": {
+    "dn":   "cn=foo,o=fqdn,dc=example,dc=com",
+    "href": "/route/foo",
+    "rel":  "self"
+  },
+  "cn": "foo",
+  "givenName": "Mr. Foo",
+  "boss": [
+    {
+      "dn":   "cn=bar,o=fqdn,dc=example,dc=com",
+      "href": "/route/bar",
+      "rel":  "boss"
+    },
+    {
+      "dn":   "cn=quux,o=fqdn,dc=example,dc=com",
+      "href": "/route/quux",
+      "rel":  "boss"
+    }
+  ]
+}
+```
+
+Cool, huh?
 
 ### Query String Parameters
 
