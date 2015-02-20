@@ -48,6 +48,10 @@ var ldap = (function(clientOptions) {
 var express = require('express'),
     app     = express();
 
+if (env.RPBASE) {
+  app.set('trust proxy', true);
+}
+
 app.use(require('bunyan-middleware')({
   logger:         logger,
   obscureHeaders: ['Authorization']
@@ -57,7 +61,33 @@ app.use(require('compression')());
 
 // Profile hosting (if required)
 if (env.PROFDIR) {
-  app.use(env.PROFROUTE || '/profiles', express.static(env.PROFDIR));
+  var mustache = require('consolidate').mustache;
+
+  var route = (env.PROFROUTE || '/profiles') + '/:id',
+      tags  = {
+        baseURL: env.RPBASE
+      }
+
+  app.engine('json', mustache);
+  app.set('views', env.PROFDIR);
+  app.set('view engine', 'json');
+
+  app.get(route, function(req, res, next) {
+    res.render(req.params.id, tags, function(err, output) {
+      if (err) {
+        // Some rendering error
+        next({
+          status:    500,
+          message:   err.message,
+          exception: err
+        });
+
+      } else {
+        res.set('Content-Type', 'application/json');
+        res.send(output);
+      }
+    });
+  });
 }
 
 // API routing

@@ -8,7 +8,8 @@ var parseFilter       = require('ldapjs').parseFilter,
 // Load and transform the route map
 var routeMap = (function(src) {
   var mapping      = require(src),
-      allowedScope = ['base', 'sub', 'one', 'childern'];
+      allowedScope = ['base', 'sub', 'one', 'childern'],
+      baseURL      = process.env.RPBASE;
 
   // Parameterised DN, using :bind variables
   var paramDN = function(dn) {
@@ -29,13 +30,17 @@ var routeMap = (function(src) {
     };
   }
 
-  // Parameterise each route map and normalise scope
+  // Parameterise each route map, normalise scope and rebase profile URL
   // n.b. mapping is just JSON, so we don't have to do hasOwnProperty
   for (route in mapping) {
     mapping[route].dn = paramDN(mapping[route].dn);
 
     if (allowedScope.indexOf(mapping[route].scope) == -1) {
       mapping[route].scope = 'base';
+    }
+
+    if (baseURL) {
+      mapping[route].profile = baseURL + mapping[route].profile;
     }
   }
 

@@ -4,8 +4,8 @@
     "memberUid": "Group members"
   },
   "links": [
-    { "href": "/groups",            "rel": "collection" },
-    { "href": "/groups/:cn",        "rel": "item" },
-    { "href": "/people/:memberUid", "rel": "member" }
+    { "href": "{{{baseURL}}}/groups",            "rel": "collection" },
+    { "href": "{{{baseURL}}}/groups/:cn",        "rel": "item" },
+    { "href": "{{{baseURL}}}/people/:memberUid", "rel": "member" }
   ]
 }

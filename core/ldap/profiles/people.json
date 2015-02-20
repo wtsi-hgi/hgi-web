@@ -8,8 +8,8 @@
     "departmentNumber": "Department"
   },
   "links": [
-    { "href": "/people",                  "rel": "collection" },
-    { "href": "/people/:uid",             "rel": "item" },
-    { "href": "/teams/:departmentNumber", "rel": "team" }
+    { "href": "{{{baseURL}}}/people",                  "rel": "collection" },
+    { "href": "{{{baseURL}}}/people/:uid",             "rel": "item" },
+    { "href": "{{{baseURL}}}/teams/:departmentNumber", "rel": "team" }
   ]
 }

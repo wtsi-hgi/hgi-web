@@ -10,8 +10,10 @@
     "bunyan": "*",
     "bunyan-middleware": "*",
     "compression": "*",
+    "consolidate": "*",
     "express": "*",
     "ldapjs": "*",
+    "mustache": "*",
     "node-env-file": "*"
   }
 }

@@ -105,11 +105,13 @@ encoded as `%26`. For example:
 
     http://ldap.gateway/people?q=(%26(sn=bloggs)(dept=foo))
 
-## Profile Static Hosting
+## Profile Hosting
 
-Profile documents may be statically hosted from this service, if
-desired. However, there is no need to use this as a repository, it's
-just provided as a convenience.
+Profile documents may be hosted from this service, if desired. However,
+there is no need to use this as a repository, it's just provided as a
+convenience. To sweeten the deal, profiles are served as templated JSON
+files, using Mustache, to properly prefix hyperlinks with the 
+`{{{baseURL}}}` tag should the service be running upstream.
 
 ## Environment Variables
 
@@ -127,4 +129,6 @@ The following environment variables are consumed by the service:
   (optional)
 * `PROFROUTE` The route where static profile documents from `PROFDIR`
   are hosted (defaults to `/profiles`)
+* `RPBASE` If you are running the service upstream, set this to the
+  appropriate base path to correct URLs
 * `PORT` The port on which the client service will listen

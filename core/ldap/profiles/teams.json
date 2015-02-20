@@ -5,7 +5,7 @@
     "description":      "Full description"
   },
   "links": [
-    { "href": "/teams",                   "rel": "collection" },
-    { "href": "/teams/:departmentNumber", "rel": "item" }
+    { "href": "{{{baseURL}}}/teams",                   "rel": "collection" },
+    { "href": "{{{baseURL}}}/teams/:departmentNumber", "rel": "item" }
   ]
 }

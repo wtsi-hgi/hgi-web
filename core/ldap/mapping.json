@@ -1,43 +1,43 @@
 {
   "/": {
     "dn":      "dc=sanger,dc=ac,dc=uk",
-    "profile": "/profiles/root.json"
+    "profile": "/profiles/root"
   },
 
   "/groups": {
     "dn":      "ou=group,dc=sanger,dc=ac,dc=uk",
     "scope":   "one",
     "attrs":   ["cn", "member"],
-    "profile": "/profiles/groups.json"
+    "profile": "/profiles/groups"
   },
 
   "/groups/:id": {
     "dn":      "cn=:id,ou=group,dc=sanger,dc=ac,dc=uk",
-    "profile": "/profiles/groups.json"
+    "profile": "/profiles/groups"
   },
 
   "/people": {
     "dn":      "ou=people,dc=sanger,dc=ac,dc=uk",
     "scope":   "one",
     "attrs":   ["uid", "cn", "mail"],
-    "profile": "/profiles/people.json"
+    "profile": "/profiles/people"
   },
 
   "/people/:id": {
     "dn":      "uid=:id,ou=people,dc=sanger,dc=ac,dc=uk",
-    "profile": "/profiles/people.json"
+    "profile": "/profiles/people"
   },
 
   "/teams": {
     "dn":      "ou=teams,dc=sanger,dc=ac,dc=uk",
     "scope":   "one",
     "attrs":   ["departmentNumber", "cn"],
-    "profile": "/profiles/teams.json"
+    "profile": "/profiles/teams"
   },
 
   "/teams/:n": {
     "dn":      "departmentNumber=:n,ou=teams,dc=sanger,dc=ac,dc=uk",
     "attrs":   ["departmentNumber", "cn"],
-    "profile": "/profiles/teams.json"
+    "profile": "/profiles/teams"
   }
 }
