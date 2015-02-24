@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<!--
+Minimal HTML5 History Demonstration
+
+MIT License
+Copyright (c) 2015 Genome Research Limited
+-->
+
+<html>
+  <head>
+    <title>Minimal HTML5 History</title>
+    <script>
+      
+      var state = (function() {
+        var _page = 1;
+
+        return {
+          render: function() {},
+
+          // Get absolutely
+          get page() {
+            return _page;
+          },
+
+          // Set relatively
+          set page(delta) {
+            _page += delta;
+            if (_page < 1) _page = 1;
+
+            // Only push state if we change page
+            if (delta) history.pushState(_page, 'Page ' + _page, _page);
+            
+            this.render(_page)
+          }
+        };
+      })();
+      
+      // Extract page number from URL
+      var extractPage = function() {
+        var page = location.href.match(/\/(\d+)$/);
+        return page && parseInt(page[1], 10) || 1;
+      };
+
+      // Update the state upon browser navigation
+      window.addEventListener('popstate', function(e) {
+        state.page = (e.state || extractPage()) - state.page;
+      });
+
+      window.addEventListener('load', function() {
+        // Link view with state
+        state.render = (function() {
+          var num  = document.getElementById('num'),
+              prev = document.querySelector('button.nav[data-d="-1"]');
+          
+          return function(page) {
+            num.innerHTML = page;
+
+            // The `disabled` attribute is based simply on presence,
+            // rather than value, so we can't just set it as a Boolean
+            if (page == 1) {
+              prev.setAttribute('disabled', true);
+            } else {
+              prev.removeAttribute('disabled');
+            }
+          };
+        })();
+
+        // DOM button navigation
+        // ...Should probably be handled with event bubbling
+        (function() {
+          var buttons = document.querySelectorAll('button.nav');
+
+          Array.prototype.forEach.call(buttons, function(button) {
+            var delta = parseInt(button.getAttribute('data-d'), 10);
+            button.addEventListener('click', function() {
+              state.page = delta;
+            });
+          });
+        })();
+
+        // Cursor key navigation
+        // i.e. ← (37) and → (39)
+        document.addEventListener('keydown', function(e) {
+          var delta = e.keyCode - 38;
+          if (Math.abs(delta) == 1) state.page = delta;
+        });
+
+        // Set initial page state from history or location
+        state.page = (history.state || extractPage()) - state.page;
+      });
+
+    </script>
+  </head>
+  <body>
+    <p>
+      <button class="nav" data-d="-1">Previous</button>
+      <span>Page <span id="num"></span></span>
+      <button class="nav" data-d="1">Next</button>
+    </p>
+  </body>
+</html>
