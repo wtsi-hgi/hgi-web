@@ -1,0 +1,17 @@
+doctype
+html
+  head
+    title Manual Authentication
+  body
+    p
+      | Your browser doesn't support JavaScript or has had this feature
+      | disabled. To this end, you must provide authentication token
+      | credentials manually. Below, you will see the username and
+      | password which you will need to use, when prompted:
+    iframe(src='/token')
+    p
+      | You are recommended to copy these credentials into a text editor
+      | for your convenience. The token will expire within one hour; at
+      | which point, you will be put through this cycle again.
+    p
+      | When you are ready to continue, #[a(href='/manual-auth') click here].

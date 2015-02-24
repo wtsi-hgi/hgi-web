@@ -1,0 +1,14 @@
+doctype
+html
+  head
+    title Minimal Authentication Flow
+    unless authenticated
+      noscript
+        meta(http-equiv='refresh', content='0; url=/manual-guide')
+    script(src='//code.jquery.com/jquery-2.1.3.min.js')
+    script(src='/assets/app.js')
+  body
+    p You are in!
+    div#auth #{auth}
+    a(href='/api')#fetch Get data
+    pre#api #{JSON.stringify(api, null, 2)}
