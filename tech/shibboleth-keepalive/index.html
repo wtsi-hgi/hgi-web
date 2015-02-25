@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<!--
+Shibboleth Session Keepalive Experiment
+
+MIT License
+Copyright (c) 2015 Genome Research Limited
+-->
+
+<html>
+  <head>
+    <title>Shibboleth Keepalive Test</title>
+    <style>.hidden { display: none; }</style>
+    <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script>
+
+      $(document).ready(function() {
+        var t = (function() {
+          var _start = new Date(),
+              split = { refresh: null, error: null };
+
+          $('#ready-time').text(_start.toTimeString());
+
+          var showTime = function(id) {
+            var elapsed = split[id] - _start;
+
+            $('#' + id + '-info').show();
+            $('#' + id + '-time').text(split[id].toTimeString() +
+                                       ' = ' + Math.floor(elapsed / 60000) + ' mins');
+          };
+
+          return {
+            set refresh(v) {
+              split.refresh = v;
+              showTime('refresh');
+            },
+
+            set error(v) {
+              if (!split.error) {
+                split.error = v;
+                showTime('error');
+              }
+            }
+          };
+        })();
+
+        var heartbeat = setInterval(function() {
+          $.ajax({
+            url:      'noop.json',
+            dataType: 'json',
+
+            success: function() {
+              t.refresh = new Date();
+            },
+
+            error: function() {
+              t.error = new Date();
+              clearInterval(heartbeat);
+            }
+          });
+        }, 60000);
+      });
+
+    </script>
+  </head>
+  <body>
+    <p>Page ready at <span id="ready-time"></span>.</p>
+    <p id="refresh-info" class="hidden">
+      Last refreshed at <span id="refresh-time">...</span>.
+    </p>
+    <p id="error-info" class="hidden">
+      First failure at <span id="error-time">...</span>.
+    </p>
+  </body>
+</html>
