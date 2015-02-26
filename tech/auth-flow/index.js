@@ -68,7 +68,7 @@ app.get('/manual-auth', function(req, res) {
 
   } else {
     res.set('WWW-Authenticate', 'Basic');
-    res.status(401).send('Cannot authenticate');
+    res.status(401).render('manual');
   }
 });
 
