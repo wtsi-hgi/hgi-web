@@ -23,10 +23,11 @@ module.exports = function(req, res, next) {
       break;
 
     default:
+      token = { valid: false };
       break;
   }
 
-  if (token && token.isValid()) {
+  if (token.valid) {
     // We're good!
     // Thread decoded token data through all requests
     req.token = token;
