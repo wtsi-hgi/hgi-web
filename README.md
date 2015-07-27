@@ -1,5 +1,7 @@
 # HGI Web Application
 
+[![Join the chat at https://gitter.im/wtsi-hgi/hgi-web](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/wtsi-hgi/hgi-web?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 The full service stack for the management of HGI systems:
 
 * [API token provider](token)
